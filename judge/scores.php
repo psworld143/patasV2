@@ -139,93 +139,88 @@ if ($result = $con->query($query)) {
                     <div class="card card-info elevation-2">
                         <br>
                         <div class="col-md-12">
-                            <div class="row">
-
-                                <?php
-                                // Verify that category_id is available
-                                if ($category_id !== null) {
-                                    $query2 = "SELECT * FROM contestants ORDER BY contestant_no ASC";
-                                    if ($result2 = $con->query($query2)) {
-                                        while ($row2 = $result2->fetch_assoc()) {
-                                            echo '
-                                            <div class="col-lg-6">
-                                                <form onSubmit="return confirm(\'Do you want to submit?\')" action="backend/add_score.php" method="POST">
-                                                    <div class="info-box bg-warning content-header">
-                                                        <div style="float: right;">
-                                                            <a href="../images/' . $row2['image'] . '" target="_blank"><img src="../images/' . $row2['image'] . '" style="height: 100px; width: 80px;border-radius: 50%;  border: 2px solid #555;"></a>
-                                                        </div>
-                                                        <div style="float: left">
-                                                            <p style="font-size: 22px;">' . $row2['firstname'] . ' ' . $row2['middlename'] . ' ' . $row2['lastname'] . '</p>
-                                                            <p style="font-size: 18px;" class="badge bg-white" style="padding: 8px; margin-left: 10%; color: white;"> ' . $row2['gender'] . ' Candidate # ' . $row2['contestant_no'] . '</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="info-box">
-                                                        <div class="content-header bg-warning"></div>
-                                                        <table class="table">
-                                                            <thead class="btn-cancel">
-                                                                <tr>
-                                                                    <th>Criteria</th>
-                                                                    <th><center>Score</center></th>
-                                                                </tr>
-                                                            </thead>';
-
-                                            $query1 = "SELECT criteria_archive.id AS criteria_id, criteria_archive.criteria_name AS criteria_name, criteria_informations.percentage AS percentage 
-                                                        FROM criteria_informations 
-                                                        LEFT JOIN criteria_archive ON criteria_informations.criteria_id = criteria_archive.id 
-                                                        LEFT JOIN scores ON scores.criteria_id = criteria_archive.id 
-                                                        WHERE criteria_informations.event_id = '$category_id' 
-                                                        AND criteria_informations.criteria_id NOT IN (
-                                                            SELECT scores.criteria_id 
-                                                            FROM scores 
-                                                            WHERE scores.judge = '$_SESSION[username]' 
-                                                            AND scores.contestant = '$row2[id]' 
-                                                            AND scores.category = '$category_id'
-                                                        ) 
-                                                        GROUP BY criteria_informations.criteria_id";
-
-                                            if ($result1 = $con->query($query1)) {
-                                                while ($row1 = $result1->fetch_assoc()) {
-                                                    $max = $row1['percentage'];
-
-                                                    echo '
-                                                    <tr style="border-collapse: collapse;">
-                                                        <td>
-                                                            <p style="font-size: 22px;">' . $row1['criteria_name'] . ' <span class="badge bg-yellow">' . $row1['percentage'] . '%</span></p>
-                                                        </td>
-                                                        <td>
-                                                            <div class="col-md-12">
-                                                                <div class="form-group">
-                                                                    <input type="hidden" name="contestant_id" value="' . $row2['id'] . '">
-                                                                    <input type="hidden" name="event_id" value="' . $category_id . '">
-                                                                    <input type="hidden" name="judge" value="' . $_SESSION['username'] . '">
-                                                                    <input type="hidden" name="criteria_id[]" value="' . $row1['criteria_id'] . '">
-                                                                    <input type="number" min="0" max="' . $max . '" class="form-control" name="score[]" value="' . (isset($row1['score']) ? $row1['score'] : '') . '" required>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>';
-                                                }
-                                            } else {
-                                                echo '<tr><td colspan="2">No criteria found for this event.</td></tr>';
-                                            }
-
-                                            echo '</table>
-                                                    <br>
-                                                    <div class="col-lg-12">
-                                                        <button class="btn btn-success btn-lg col-md-12" type="submit" name="submit">Submit</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>';
-                                        }
-                                    } else {
-                                        echo '<div class="col-lg-12"><p>No contestants found.</p></div>';
-                                    }
-                                } else {
-                                    echo '<p>No event category ready for tabulation.</p>';
-                                }
-                                ?>
+                        <div class="row">
+    <?php
+    // Verify that category_id is available
+    if ($category_id !== null) {
+        $query2 = "SELECT * FROM contestants ORDER BY contestant_no ASC";
+        if ($result2 = $con->query($query2)) {
+            while ($row2 = $result2->fetch_assoc()) {
+                echo '
+                <div class="col-lg-6 mb-4">
+                    <form onSubmit="return confirm(\'Do you want to submit?\')" action="backend/add_score.php" method="POST">
+                        <div class="info-box bg-warning content-header mb-3">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <p style="font-size: 22px;">' . $row2['firstname'] . ' ' . $row2['middlename'] . ' ' . $row2['lastname'] . '</p>
+                                    <p style="font-size: 18px;" class="badge bg-white text-dark">' . $row2['gender'] . ' Candidate # ' . $row2['contestant_no'] . '</p>
+                                </div>
+                                <a href="../images/' . $row2['image'] . '" target="_blank">
+                                    <img src="../images/' . $row2['image'] . '" style="height: 100px; width: 80px; border-radius: 50%; border: 2px solid #555;">
+                                </a>
                             </div>
+                        </div>
+                        <div class="info-box">
+                            <table class="table">
+                                <thead class="bg-warning text-white">
+                                    <tr>
+                                        <th>Criteria</th>
+                                        <th class="text-center">Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody>';
+
+                $query1 = "SELECT criteria_archive.id AS criteria_id, criteria_archive.criteria_name AS criteria_name, criteria_informations.percentage AS percentage 
+                            FROM criteria_informations 
+                            LEFT JOIN criteria_archive ON criteria_informations.criteria_id = criteria_archive.id 
+                            LEFT JOIN scores ON scores.criteria_id = criteria_archive.id 
+                            WHERE criteria_informations.event_id = '$category_id' 
+                            AND criteria_informations.criteria_id NOT IN (
+                                SELECT scores.criteria_id 
+                                FROM scores 
+                                WHERE scores.judge = '$_SESSION[username]' 
+                                AND scores.contestant = '$row2[id]' 
+                                AND scores.category = '$category_id'
+                            ) 
+                            GROUP BY criteria_informations.criteria_id";
+
+                if ($result1 = $con->query($query1)) {
+                    while ($row1 = $result1->fetch_assoc()) {
+                        $max = $row1['percentage'];
+
+                        echo '
+                        <tr>
+                            <td>
+                                <p style="font-size: 22px;">' . $row1['criteria_name'] . ' <span class="badge bg-yellow">' . $row1['percentage'] . '%</span></p>
+                            </td>
+                            <td>
+                                <input type="number" min="0" max="' . $max . '" class="form-control" name="score[]" value="' . (isset($row1['score']) ? $row1['score'] : '') . '" required>
+                                <input type="hidden" name="criteria_id[]" value="' . $row1['criteria_id'] . '">
+                            </td>
+                        </tr>';
+                    }
+                } else {
+                    echo '<tr><td colspan="2">No criteria found for this event.</td></tr>';
+                }
+
+                echo '</tbody>
+                            </table>
+                            <div class="d-flex justify-content-center mt-3">
+                                <button class="btn btn-success btn-lg" type="submit" name="submit">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>';
+            }
+        } else {
+            echo '<div class="col-lg-12"><p>No contestants found.</p></div>';
+        }
+    } else {
+        echo '<p>No event category ready for tabulation.</p>';
+    }
+    ?>
+</div>
+
                         </div>
                         <br>
                     </div>
