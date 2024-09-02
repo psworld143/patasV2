@@ -307,8 +307,8 @@ if ($result = $con->query($query)) {
                   </div>
                   <!-- /.card-body -->
                   <div class="card-footer">
-                     <a href="#" class="btn btn-cancel" data-dismiss="modal">Cancel</a>
-                     <button type="submit" class="btn btn-save">Save Changes</button>
+                     <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel</a>
+                     <button type="submit" class="btn btn-success">Save Changes</button>
                   </div>
                </form>
             </div>
