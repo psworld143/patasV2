@@ -251,7 +251,7 @@ if ($result = $con->query($query)) {
                               <td class="text-center">
                                  
                                  <a class="open-SetActiveDialog btn btn-sm btn-warning" href="active" data-id="'.$row['id'].'" data-toggle="modal" ><i
-                                       class="fa fa-trash-alt"></i> Set Ready</a>
+                                       class="fa fa-check"></i> Set Ready</a>
                                  <a class="open-DeleteDialog btn btn-sm btn-danger" href="delete" data-id="'.$row['id'].'" data-toggle="modal" ><i
                                        class="fa fa-trash-alt"></i> Delete</a>
                               </td>
