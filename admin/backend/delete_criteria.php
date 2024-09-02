@@ -7,7 +7,7 @@ if (isset($_POST['criteriaID'])) {
 
     $query = "DELETE FROM criteria_archive WHERE id = '$criteria_id'";
     $result = mysqli_query($con, $query);
-    if ($result1) {
+    if ($result) {
 
     }
 
