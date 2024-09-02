@@ -194,6 +194,7 @@ if ($result = $con->query($query)) {
                                 <p style="font-size: 22px;">' . $row1['criteria_name'] . ' <span class="badge bg-yellow">' . $row1['percentage'] . '%</span></p>
                             </td>
                             <td>
+                            <br>
                                 <input type="number" min="0" max="' . $max . '" class="form-control" name="score[]" value="' . (isset($row1['score']) ? $row1['score'] : '') . '" required>
                                 <input type="hidden" name="criteria_id[]" value="' . $row1['criteria_id'] . '">
                             </td>
@@ -205,11 +206,11 @@ if ($result = $con->query($query)) {
 
                 echo '</tbody>
                             </table>
-                            <div class="d-flex justify-content-center mt-3">
-                                <button class="btn btn-success btn-lg" type="submit" name="submit">Submit</button>
-                            </div>
                         </div>
                     </form>
+                    <div class="d-flex justify-content-center mt-3">
+                                <button class="btn btn-success btn-lg" type="submit" name="submit">Submit</button>
+                            </div>
                 </div>';
             }
         } else {
