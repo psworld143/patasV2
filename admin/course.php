@@ -269,7 +269,7 @@ if ($result = $con->query($query)) {
                <img src="../asset/img/sent.png" alt="" width="50" height="46">
                <h3>Are you sure want to delete this Divisions?</h3>
                <div class="m-t-20">
-                  <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
+                  <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
                   <button type="submit" class="btn btn-danger">Delete</button>
                </div>
             </div>
@@ -306,8 +306,8 @@ if ($result = $con->query($query)) {
                   </div>
                   <!-- /.card-body -->
                   <div class="card-footer">
-                     <a href="#" class="btn btn-cancel" data-dismiss="modal">Cancel</a>
-                     <button type="submit" class="btn btn-save">Save Changes</button>
+                     <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
+                     <button type="submit" class="btn btn-primary">Save Changes</button>
                   </div>
                </form>
             </div>

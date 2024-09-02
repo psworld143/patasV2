@@ -2,7 +2,6 @@
  session_start();
 ?>
 <?php
-include '../includes/dbcon.php';
 $current_judge = $_SESSION['username'];
 $query = "SELECT * FROM admin_users WHERE username = '$current_judge'";
 if ($result = $con->query($query)) {
@@ -50,7 +49,7 @@ if ($result = $con->query($query)) {
                <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
             <li class="nav-item">
-               <p style="font-size: 24px; color: white;">Pageant Tabulation System-PaTaS</p>
+               <p style="font-size: 24px; color: white;">Pageant Tabulation System - PaTaS</p>
             </li>
          </ul>
          <ul class="navbar-nav ml-auto">
@@ -270,51 +269,58 @@ if ($result = $con->query($query)) {
                <img src="../asset/img/sent.png" alt="" width="50" height="46">
                <h3>Are you sure want to delete this Criteria?</h3>
                <div class="m-t-20">
-                  <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-                  <button type="submit" class="btn btn-danger">Delete</button>
+                  <form action="backend/delete_criteria.php" method="POST">
+                     <div class="modal-body">
+     
+                        <input type="hidden" name="criteriaID" id="criteriaID" value=""/>
+                     </div>
+                     <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
+                     <button type="submit" class="btn btn-danger">Delete</button>
+                  </form>
+                  
                </div>
             </div>
          </div>
       </div>
    </div>
-   <div id="edit" class="modal animated rubberBand delete-modal" role="dialog">
-      <div class="modal-dialog modal-dialog-centered modal-md">
-         <div class="modal-content">
-            <div class="modal-body text-center">
-               <form>
-                  <div class="card-body">
-                     <div class="row">
-                        <div class="col-md-12">
-                           <div class="card-header">
-                              <h5><img src="../asset/img/criteria.png" width="40"> Criteria Information</h5>
-                           </div>
-                           <div class="row">
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Criteria Name</label>
-                                    <input type="text" class="form-control" placeholder="Criteria Name">
-                                 </div>
+  <div id="edit" class="modal animated rubberBand delete-modal" role="dialog">
+   <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+         <div class="modal-body text-center">
+            <form action="backend/update_criteria.php" method="POST">
+               <div class="card-body">
+                  <div class="row">
+                     <div class="col-md-12">
+                        <div class="card-header">
+                           <h5><img src="../asset/img/criteria.png" width="40"> Criteria Information</h5>
+                        </div>
+                        <div class="row">
+                           <div class="col-md-12">
+                              <div class="form-group">
+                                 <label class="float-left">Criteria Name</label>
+                                 <input type="text" class="form-control" placeholder="Criteria Name">
                               </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Description</label>
-                                    <textarea class="form-control" placeholder="Descriptions"></textarea>
-                                 </div>
+                           </div>
+                           <div class="col-md-12">
+                              <div class="form-group">
+                                 <label class="float-left">Description</label>
+                                 <textarea class="form-control" placeholder="Descriptions"></textarea>
                               </div>
                            </div>
                         </div>
                      </div>
                   </div>
-                  <!-- /.card-body -->
-                  <div class="card-footer">
-                     <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel</a>
-                     <button type="submit" class="btn btn-success">Save Changes</button>
-                  </div>
-               </form>
-            </div>
+               </div>
+               <!-- /.card-body -->
+               <div class="card-footer">
+                  <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
+               </div>
+            </form>
          </div>
       </div>
    </div>
+</div>
    <div id="add" class="modal animated rubberBand delete-modal" role="dialog">
       <div class="modal-dialog modal-dialog-centered modal-md">
          <div class="modal-content">
@@ -345,8 +351,8 @@ if ($result = $con->query($query)) {
                   </div>
                   <!-- /.card-body -->
                   <div class="card-footer">
-                     <a href="#" class="btn btn-cancel" data-dismiss="modal">Cancel</a>
-                     <button type="submit" class="btn btn-save">Save</button>
+                     <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
+                     <button type="submit" class="btn btn-primary">Save</button>
                   </div>
                </form>
             </div>

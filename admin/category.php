@@ -251,7 +251,7 @@ if ($result = $con->query($query)) {
                               <td class="text-center">
                                  
                                  <a class="open-SetActiveDialog btn btn-sm btn-warning" href="active" data-id="'.$row['id'].'" data-toggle="modal" ><i
-                                       class="fa fa-trash-alt"></i> Set Ready</a>
+                                       class="fa fa-check"></i> Set Ready</a>
                                  <a class="open-DeleteDialog btn btn-sm btn-danger" href="delete" data-id="'.$row['id'].'" data-toggle="modal" ><i
                                        class="fa fa-trash-alt"></i> Delete</a>
                               </td>
@@ -287,7 +287,7 @@ if ($result = $con->query($query)) {
      
                         <input type="hidden" name="categoryID" id="categoryID" value=""/>
                      </div>
-                  <a href="#" class="btn btn-white" data-dismiss="modal">No</a>
+                  <a href="#" class="btn btn-danger" data-dismiss="modal">No</a>
                   <button type="submit" class="btn btn-success">Yes</button>
                      </form>
                </div>
@@ -307,9 +307,9 @@ if ($result = $con->query($query)) {
      
                         <input type="hidden" name="categoryID" id="categoryID" value=""/>
                      </div>
-                  <a href="#" class="btn btn-white" data-dismiss="modal">No</a>
-                  <button type="submit" class="btn btn-success">Yes</button>
-                     </form>
+                     <a href="#" class="btn btn-danger" data-dismiss="modal">No</a>
+                     <button type="submit" class="btn btn-success">Yes</button>
+                  </form>
                </div>
             </div>
          </div>
@@ -395,8 +395,8 @@ if ($result = $con->query($query)) {
                   </div>
                   <!-- /.card-body -->
                   <div class="card-footer">
-                     <a href="#" class="btn btn-cancel" data-dismiss="modal">Cancel</a>
-                     <button type="submit" class="btn btn-save">Save</button>
+                     <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
+                     <button type="submit" class="btn btn-primary">Save</button>
                   </div>
                </form>
             </div>
