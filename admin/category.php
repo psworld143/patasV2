@@ -51,7 +51,7 @@ if ($result = $con->query($query)) {
                <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
             <li class="nav-item">
-               <p style="font-size: 24px; color: white;">Pageant Tabulation System-PaTaS</p>
+               <p style="font-size: 24px; color: white;">Pageant Tabulation System - PaTaS</p>
             </li>
          </ul>
          <ul class="navbar-nav ml-auto">
@@ -243,6 +243,8 @@ if ($result = $con->query($query)) {
                                  while($row = $result->fetch_assoc()){
                                     echo '
                                     <tr>
+
+                                    
                               <td>'.$row['category_name'].'</td>
                               <td>'.$row['description'].'</td>
                               <td>'.$row['order_number'].'</td>

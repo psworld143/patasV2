@@ -47,7 +47,7 @@ if ($result = $con->query($query)) {
                <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
             <li class="nav-item">
-               <p style="font-size: 24px; color: white;">Pageant Tabulation System-PaTaS</p>
+               <p style="font-size: 24px; color: white;">Pageant Tabulation System - PaTaS</p>
             </li>
          </ul>
          <ul class="navbar-nav ml-auto">

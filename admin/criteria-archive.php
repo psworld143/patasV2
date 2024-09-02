@@ -241,10 +241,12 @@ if ($result = $con->query($query)) {
                               <td>'.$row['criteria_name'].'</td>
                               <td>'.$row['description'].'</td>
                               <td class="text-center">
-                                 <a class="btn btn-sm btn-success" href="#" data-toggle="modal" data-target="#edit"><i
-                                       class="fa fa-edit"></i> update</a>
-                                 <a class="btn btn-sm btn-danger" href="#" data-toggle="modal" data-target="#delete"><i
-                                       class="fa fa-trash-alt"></i> delete</a>
+                                 <a class="btn btn-sm btn-success" href="#" data-id="'.$row['id'].'" data-toggle="modal" data-target="#edit">
+                                    <i class="fa fa-edit"></i>update
+                                 </a>
+                                 <a class="btn btn-sm btn-danger open-DeleteDialog" href="#" data-id="'.$row['id'].'" data-toggle="modal" data-target="#delete">
+                                    <i class="fa fa-trash-alt"></i>delete
+                                 </a>
                               </td>
                            </tr>
                                  ';
@@ -272,10 +274,10 @@ if ($result = $con->query($query)) {
                   <form action="backend/delete_criteria.php" method="POST">
                      <div class="modal-body">
      
-                        <input type="hidden" name="criteriaID" id="criteriaID" value=""/>
+                        <input type="hidden" name="criteriaID" id="criteriaID">
                      </div>
-                     <a href="#" class="btn btn-secondary" data-dismiss="modal">Close</a>
-                     <button type="submit" class="btn btn-danger">Delete</button>
+                     <a href="#" class="btn btn-danger" data-dismiss="modal">No</a>
+                     <button type="submit" class="btn btn-success">Yes</button>
                   </form>
                   
                </div>
@@ -283,44 +285,45 @@ if ($result = $con->query($query)) {
          </div>
       </div>
    </div>
-  <div id="edit" class="modal animated rubberBand delete-modal" role="dialog">
-   <div class="modal-dialog modal-dialog-centered modal-md">
-      <div class="modal-content">
-         <div class="modal-body text-center">
-            <form action="backend/update_criteria.php" method="POST">
-               <div class="card-body">
-                  <div class="row">
-                     <div class="col-md-12">
-                        <div class="card-header">
-                           <h5><img src="../asset/img/criteria.png" width="40"> Criteria Information</h5>
-                        </div>
+   <div id="edit" class="modal animated rubberBand delete-modal" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <form action="backend/update_criteria.php" method="POST">
+                    <div class="card-body">
                         <div class="row">
-                           <div class="col-md-12">
-                              <div class="form-group">
-                                 <label class="float-left">Criteria Name</label>
-                                 <input type="text" class="form-control" placeholder="Criteria Name">
-                              </div>
-                           </div>
-                           <div class="col-md-12">
-                              <div class="form-group">
-                                 <label class="float-left">Description</label>
-                                 <textarea class="form-control" placeholder="Descriptions"></textarea>
-                              </div>
-                           </div>
+                            <div class="col-md-12">
+                                <div class="card-header">
+                                    <h5><img src="../asset/img/criteria.png" width="40"> Criteria Information</h5>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="float-left">Criteria Name</label>
+                                            <input type="text" class="form-control" id="edit_criteria_name" name="criteria_name" placeholder="Criteria Name">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="float-left">Description</label>
+                                            <textarea class="form-control" id="edit_description" name="description" placeholder="Descriptions"></textarea>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="edit_criteria_id" name="criteria_id">
+                                </div>
+                            </div>
                         </div>
-                     </div>
-                  </div>
-               </div>
-               <!-- /.card-body -->
-               <div class="card-footer">
-                  <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
-                  <button type="submit" class="btn btn-primary">Save Changes</button>
-               </div>
-            </form>
-         </div>
-      </div>
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer">
+                        <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
    </div>
-</div>
    <div id="add" class="modal animated rubberBand delete-modal" role="dialog">
       <div class="modal-dialog modal-dialog-centered modal-md">
          <div class="modal-content">
@@ -369,6 +372,21 @@ if ($result = $con->query($query)) {
    <script src="../asset/tables/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
    <script src="../asset/tables/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
    <script>
+      $(document).on("click", ".open-DeleteDialog", function () {
+         var criteriaID = $(this).data('id');
+         $("#criteriaID").val(criteriaID);
+         $('#delete').modal('show');
+      });
+      $(document).on("click", ".btn-success", function () {
+        var criteriaID = $(this).data('id');
+        var criteriaName = $(this).closest("tr").find("td:eq(0)").text();
+        var description = $(this).closest("tr").find("td:eq(1)").text();
+
+        $("#edit_criteria_id").val(criteriaID);
+        $("#edit_criteria_name").val(criteriaName);
+        $("#edit_description").val(description);
+        $('#edit').modal('show');
+    });
       $(function () {
          $("#example1").DataTable();
       });

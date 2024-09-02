@@ -52,7 +52,7 @@ if ($result = $con->query($query)) {
                <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
             <li class="nav-item">
-               <p style="font-size: 24px; color: white;">Pageant Tabulation System-PaTaS</p>
+               <p style="font-size: 24px; color: white;">Pageant Tabulation System - PaTaS</p>
             </li>
          </ul>
          <ul class="navbar-nav ml-auto">
@@ -252,7 +252,7 @@ if ($result = $con->query($query)) {
                                                 <h6>'.$row1['firstname'].' '.$row1['middlename'].' '.$row1['lastname'].'</h6>
                                                 <p><span class="badge">'.$row1['gender'].' Candidate # '.$row1['contestant_no'].'</span></p>';
    
-                                             echo '
+                                                echo '
                                              </div>';
                                              
                                              echo'

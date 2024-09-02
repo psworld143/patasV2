@@ -51,7 +51,7 @@ if ($result = $con->query($query)) {
                <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
             <li class="nav-item">
-               <p style="font-size: 24px; color: white;">Pageant Tabulation System-PaTaS</p>
+               <p style="font-size: 24px; color: white;">Pageant Tabulation System - PaTaS</p>
             </li>
          </ul>
          <ul class="navbar-nav ml-auto">
@@ -279,8 +279,8 @@ if ($result = $con->query($query)) {
                <img src="../asset/img/sent.png" alt="" width="50" height="46">
                <h3>Are you sure want to delete this Contestant?</h3>
                <div class="m-t-20">
-                  <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-                  <button type="submit" class="btn btn-danger">Delete</button>
+                  <a href="#" class="btn btn-danger" data-dismiss="modal">No</a>
+                  <button type="submit" class="btn btn-success">Yes</button>
                </div>
             </div>
          </div>
@@ -351,8 +351,8 @@ if ($result = $con->query($query)) {
                   </div>
                   <!-- /.card-body -->
                   <div class="card-footer">
-                     <a href="#" class="btn btn-cancel" data-dismiss="modal">Cancel</a>
-                     <button type="submit" class="btn btn-save">Save Changes</button>
+                     <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
+                     <button type="submit" class="btn btn-primary">Save Changes</button>
                   </div>
                </form>
             </div>
@@ -448,8 +448,8 @@ if ($result = $con->query($query)) {
                   </div>
                   <!-- /.card-body -->
                   <div class="card-footer">
-                     <a href="#" class="btn btn-cancel" data-dismiss="modal">Cancel</a>
-                     <button type="submit" class="btn btn-save">Save</button>
+                     <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
+                     <button type="submit" class="btn btn-primary">Save</button>
                   </div>
                </form>
             </div>
