@@ -322,21 +322,29 @@ include '../includes/dbcon.php';
                   <span aria-hidden="true">&times;</span>
                </button>
             </div>
-            <div class="modal-body">
-               <form action="backend/deduct_points.php" method="POST">
-                  <input type="hidden" name="contestant_id" id="contestant_id">
-                  <input type="hidden" name="current_total" id="current_total">
-                  <div class="form-group">
-                     <label for="contestant_name">Contestant Name</label>
-                     <input type="text" class="form-control" id="contestant_name" name="contestant_name" readonly>
-                  </div>
-                  <div class="form-group">
-                     <label for="points_to_deduct">Points to Deduct</label>
-                     <input type="number" class="form-control" id="points_to_deduct" name="points_to_deduct" required>
-                  </div>
-                  <button type="submit" class="btn btn-danger">Deduct</button>
-               </form>
-            </div>
+         <div class="modal-body">
+            <form action="backend/deduct_points.php" method="POST">
+               <input type="hidden" name="contestant_id" id="contestant_id">
+               <input type="hidden" name="current_total" id="current_total">
+               
+               <div class="form-group">
+                  <label for="contestant_name">Contestant Name</label>
+                  <input type="text" class="form-control" id="contestant_name" name="contestant_name" readonly>
+               </div>
+               
+               <div class="form-group">      
+                  <label for="points_to_deduct">Points to Deduct</label>
+                  <input type="number" class="form-control" id="points_to_deduct" name="points_to_deduct" required>
+               </div>
+               
+               <div class="form-group">
+                  <label for="description">Description</label>
+                  <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter a description..."></textarea>
+               </div>
+               
+               <button type="submit" class="btn btn-danger">Deduct</button>
+            </form>
+         </div>
          </div>
       </div>
    </div>
