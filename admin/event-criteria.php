@@ -236,27 +236,39 @@ if ($result = $con->query($query)) {
                         </thead>
                         <tbody>
                            <?php
-                              $query = "SELECT event_category.category_name AS category_name, criteria_archive.criteria_name AS criteria_name, criteria_informations.percentage AS percentage FROM criteria_informations LEFT JOIN criteria_archive ON criteria_informations.criteria_id = criteria_archive.id LEFT JOIN event_category ON event_category.id = criteria_informations.event_id ORDER BY event_category.order_number ASC";
-                              if($result = $con->query($query)){
-                                 while($row = $result->fetch_assoc()){
+                              $query = "SELECT criteria_informations.id AS id, event_category.category_name AS category_name, criteria_archive.criteria_name AS criteria_name, criteria_informations.percentage AS percentage 
+                                       FROM criteria_informations 
+                                       LEFT JOIN criteria_archive ON criteria_informations.criteria_id = criteria_archive.id 
+                                       LEFT JOIN event_category ON event_category.id = criteria_informations.event_id 
+                                       ORDER BY event_category.order_number ASC";
+
+                              if ($result = $con->query($query)) {
+                                 while ($row = $result->fetch_assoc()) {
                                     echo '
                                     <tr>
-                                       <td>'.$row['category_name'].'</td>
-                                       <td>'.$row['criteria_name'].'</td>
-                                       <td><span class="badge bg-warning">'.$row['percentage'].'</span></td>
-                                       <td class="text-center">
-                                          <a class="btn btn-sm btn-success" href="#" data-toggle="modal" data-target="#edit"><i
-                                          class="fa fa-edit"></i> update</a>
-                                          <a class="btn btn-sm btn-danger" href="#" data-toggle="modal" data-target="#delete"><i
-                                          class="fa fa-trash-alt"></i> delete</a>
-                                       </td>
+                                          <td>' . $row['category_name'] . '</td>
+                                          <td>' . $row['criteria_name'] . '</td>
+                                          <td><span class="badge bg-warning">' . $row['percentage'] . '</span></td>
+                                          <td class="text-center">
+                                             <a class="btn btn-sm btn-success open-EditDialog" href="#" 
+                                                data-id="' . $row['id'] . '"
+                                                data-category="' . $row['category_name'] . '"
+                                                data-criteria="' . $row['criteria_name'] . '"
+                                                data-percentage="' . $row['percentage'] . '"
+                                                data-toggle="modal" data-target="#edit">
+                                                <i class="fa fa-edit"></i> update
+                                             </a>
+                                             <a class="btn btn-sm btn-danger open-DeleteDialog" href="#" 
+                                                data-id="' . $row['id'] . '" 
+                                                data-toggle="modal" data-target="#delete">
+                                                <i class="fa fa-trash-alt"></i> delete
+                                             </a>
+                                          </td>
                                     </tr>
                                     ';
                                  }
                               }
                            ?>
-                           
-                           
                         </tbody>
                      </table>
                   </div>
@@ -266,30 +278,29 @@ if ($result = $con->query($query)) {
       </div>
    </div>
    <div id="delete" class="modal animated rubberBand delete-modal" role="dialog">
-      <div class="modal-dialog modal-dialog-centered">
-         <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
             <div class="modal-body text-center">
-               <img src="../asset/img/sent.png" alt="" width="50" height="46">
-               <h3>Are you sure want to delete this Criteria?</h3>
-               <div class="m-t-20">
-               <form action="" method="POST">
-                     <div class="modal-body">
-     
-                        <input type="hidden" name="event_criteriaID" id="event_criteriaID"/>
-                     </div>
-                     <a href="#" class="btn btn-danger" data-dismiss="modal">No</a>
-                     <button type="submit" class="btn btn-success">Yes</button>
-                  </form>
-               </div>
+                <img src="../asset/img/sent.png" alt="" width="50" height="46">
+                <h3>Are you sure want to delete this Criteria?</h3>
+                <div class="m-t-20">
+                    <form action="backend/delete_event_criteria.php" method="POST">
+                        <div class="modal-body">
+                            <input type="hidden" name="event_criteriaID" id="event_criteriaID"/>
+                        </div>
+                        <a href="#" class="btn btn-danger" data-dismiss="modal">No</a>
+                        <button type="submit" class="btn btn-success">Yes</button>
+                    </form>
+                </div>
             </div>
-         </div>
-      </div>
+        </div>
+    </div>
    </div>
    <div id="edit" class="modal animated rubberBand delete-modal" role="dialog">
       <div class="modal-dialog modal-dialog-centered modal-md">
          <div class="modal-content">
             <div class="modal-body text-center">
-               <form>
+               <form action="backend/update_event_criteria.php" method="POST">
                   <div class="card-body">
                      <div class="row">
                         <div class="col-md-12">
@@ -299,30 +310,41 @@ if ($result = $con->query($query)) {
                            <div class="row">
                               <div class="col-md-12">
                                  <div class="form-group">
-                                 <label class="float-left">Event Name</label>
-                                 <select class="form-control">
-                                    <option>Cultural</option>
-                                    <option>Arts</option>
-                                    <option>Academic</option>
-                                 </select>
-                              </div>
+                                    <label class="float-left">Event Name</label>
+                                       <select class="form-control" name="event_name" id="edit_event_name">
+                                       <?php
+                                          $query = "SELECT id, category_name FROM event_category";
+                                          if ($result = $con->query($query)) {
+                                             while ($row = $result->fetch_assoc()) {
+                                                echo '<option value="' . $row['id'] . '">' . $row['category_name'] . '</option>';
+                                             }
+                                          }
+                                          ?>
+                                       </select>
+                                 </div>
                               </div>
                               <div class="col-md-12">
                                  <div class="form-group">
-                                 <label class="float-left">Criteria Name</label>
-                                 <select class="form-control">
-                                    <option>Criteria 1</option>
-                                    <option>Criteria 2</option>
-                                    <option>Criteria 3</option>
-                                 </select>
-                              </div>
+                                    <label class="float-left">Criteria Name</label>
+                                    <select class="form-control" name="criteriaName" id="edit_criteria_name">
+                                    <?php
+                                       $query = "SELECT id, criteria_name FROM criteria_archive";
+                                       if ($result = $con->query($query)) {
+                                          while ($row = $result->fetch_assoc()) {
+                                             echo '<option value="' . $row['id'] . '">' . $row['criteria_name'] . '</option>';
+                                          }
+                                       }
+                                       ?>
+                                    </select>
+                                 </div>
                               </div>
                               <div class="col-md-12">
                                  <div class="form-group">
                                     <label class="float-left">Percentage</label>
-                                    <input type="text" class="form-control" placeholder="Percentage">
+                                    <input type="text" name="percentage" id="edit_percentage" class="form-control" placeholder="Percentage">
                                  </div>
                               </div>
+                              <input type="hidden" id="edit_event_criteria_id" name="event_criteria_id">
                            </div>
                         </div>
                      </div>
@@ -353,18 +375,17 @@ if ($result = $con->query($query)) {
                                  <div class="form-group">
                                  <label class="float-left">Event Name</label>
                                  <select class="form-control" name="event">
-                                 <?php
-                              $query = "SELECT * FROM event_category";
-                              if($result = $con->query($query)){
-                                 while($row = $result->fetch_assoc()){
-                                    echo '<option value="'.$row['id'].'">'.$row['category_name'].'</option> ';
-                                 }
-                              }
-                              else{
-                                
-                              }
-                           ?>
-                                    
+                                    <?php
+                                       $query = "SELECT * FROM event_category";
+                                       if($result = $con->query($query)){
+                                          while($row = $result->fetch_assoc()){
+                                             echo '<option value="'.$row['id'].'">'.$row['category_name'].'</option> ';
+                                          }
+                                       }
+                                       else{
+                                       
+                                       }
+                                    ?>
                                  </select>
                               </div>
                               </div>
@@ -372,17 +393,17 @@ if ($result = $con->query($query)) {
                                  <div class="form-group">
                                  <label class="float-left">Criteria Name</label>
                                  <select class="form-control" name="criteria">
-                                 <?php
-                              $query = "SELECT * FROM criteria_archive";
-                              if($result = $con->query($query)){
-                                 while($row = $result->fetch_assoc()){
-                                    echo '<option value="'.$row['id'].'">'.$row['criteria_name'].'</option> ';
-                                 }
-                              }
-                              else{
-                                
-                              }
-                           ?>
+                                    <?php
+                                       $query = "SELECT * FROM criteria_archive";
+                                       if($result = $con->query($query)){
+                                          while($row = $result->fetch_assoc()){
+                                             echo '<option value="'.$row['id'].'">'.$row['criteria_name'].'</option> ';
+                                          }
+                                       }
+                                       else{
+                                       
+                                       }
+                                    ?>
                                  </select>
                               </div>
                               </div>
@@ -417,13 +438,18 @@ if ($result = $con->query($query)) {
    <script src="../asset/tables/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
    <script>
       $(document).on("click", ".open-DeleteDialog", function () {
-         var criteriaID = $(this).data('id');
+         var event_criteriaID = $(this).data('id');
          $("#event_criteriaID").val(event_criteriaID);
          $('#delete').modal('show');
       });
-
-
-
+      $(document).on("click", ".open-EditDialog", function () {
+         var id = $(this).data('id');
+         var percentage = $(this).data('percentage');
+         
+         $("#edit_event_criteria_id").val(id);
+         $("input[name='percentage']").val(percentage);
+         $('#edit').modal('show');
+      });
       $(function () {
          $("#example1").DataTable();
       });

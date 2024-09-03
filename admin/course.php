@@ -244,10 +244,12 @@ if ($result = $con->query($query)) {
                                        <td>'.$row['course_name'].'</td>
                                        <td>'.$row['description'].'</td>
                                        <td class="text-center">
-                                          <a class="btn btn-sm btn-success" href="#" data-toggle="modal" data-target="#edit"><i
-                                             class="fa fa-edit"></i> update</a>
-                                          <a class="btn btn-sm btn-danger" href="#" data-toggle="modal" data-target="#delete"><i
-                                             class="fa fa-trash-alt"></i> delete</a>
+                                          <a class="btn btn-sm btn-success" href="#" data-id="'.$row['id'].'" data-toggle="modal" data-target="#edit">
+                                             <i class="fa fa-edit"></i>update
+                                          </a>
+                                          <a class="btn btn-sm btn-danger open-DeleteDialog" href="#" data-id="'.$row['id'].'" data-toggle="modal" data-target="#delete">
+                                             <i class="fa fa-trash-alt"></i>delete
+                                          </a>
                                        </td>
                                     </tr>
                                     ';
@@ -269,51 +271,59 @@ if ($result = $con->query($query)) {
                <img src="../asset/img/sent.png" alt="" width="50" height="46">
                <h3>Are you sure want to delete this Divisions?</h3>
                <div class="m-t-20">
-                  <a href="#" class="btn btn-danger" data-dismiss="modal">No</a>
-                  <button type="submit" class="btn btn-success">Yes</button>
+               <form action="backend/delete_course.php" method="POST">
+                     <div class="modal-body">
+     
+                        <input type="hidden" name="courseID" id="courseID">
+                     </div>
+                     <a href="#" class="btn btn-danger" data-dismiss="modal">No</a>
+                     <button type="submit" class="btn btn-success">Yes</button>
+                  </form>
                </div>
             </div>
          </div>
       </div>
    </div>
    <div id="edit" class="modal animated rubberBand delete-modal" role="dialog">
-      <div class="modal-dialog modal-dialog-centered modal-md">
-         <div class="modal-content">
-            <div class="modal-body text-center">
-               <form >
-                  <div class="card-body">
-                     <div class="row">
-                        <div class="col-md-12">
-                           <div class="card-header">
-                              <h5><img src="../asset/img/course.png" width="40"> Divisions Information</h5>
-                           </div>
-                           <div class="row">
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Divisions Name</label>
-                                    <input type="text" class="form-control" name="course_name" placeholder="Divisions Name">
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Description</label>
-                                    <textarea class="form-control" name="description" placeholder="Descriptions"></textarea>
-                                 </div>
+   <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+         <div class="modal-body text-center">
+            <form action="backend/update_courses.php" method="POST">
+               <div class="card-body">
+                  <div class="row">
+                     <div class="col-md-12">
+                        <div class="card-header">
+                           <h5><img src="../asset/img/course.png" width="40"> Divisions Information</h5>
+                        </div>
+                        <div class="row">
+                           <div class="col-md-12">
+                              <div class="form-group">
+                                 <label class="float-left">Divisions Name</label>
+                                 <input type="text" class="form-control" id="edit_course_name" name="course_name" placeholder="Divisions Name">
                               </div>
                            </div>
+                           <div class="col-md-12">
+                              <div class="form-group">
+                                 <label class="float-left">Description</label>
+                                 <textarea class="form-control" id="edit_description" name="description" placeholder="Descriptions"></textarea>
+                              </div>
+                           </div>
+                           <input type="hidden" id="edit_course_id" name="course_id">
                         </div>
                      </div>
                   </div>
-                  <!-- /.card-body -->
-                  <div class="card-footer">
-                     <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
-                     <button type="submit" class="btn btn-primary">Save Changes</button>
-                  </div>
-               </form>
-            </div>
+               </div>
+               <!-- /.card-body -->
+               <div class="card-footer">
+                  <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
+               </div>
+            </form>
          </div>
       </div>
    </div>
+</div>
+
    <div id="add" class="modal animated rubberBand delete-modal" role="dialog">
       <div class="modal-dialog modal-dialog-centered modal-md">
          <div class="modal-content">
@@ -362,6 +372,24 @@ if ($result = $con->query($query)) {
    <script src="../asset/tables/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
    <script src="../asset/tables/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
    <script>
+      $(document).on("click", ".open-DeleteDialog", function () {
+         var courseID = $(this).data('id');
+         $("#courseID").val(courseID);
+         $('#delete').modal('show');
+      });
+      $(document).on("click", ".btn-success", function () {
+      var courseID = $(this).data('id');
+      var course_name = $(this).closest("tr").find("td:eq(0)").text();
+      var description = $(this).closest("tr").find("td:eq(1)").text();
+
+      // Populate the modal fields with the data
+      $("#edit_course_id").val(courseID);
+      $("#edit_course_name").val(course_name);
+      $("#edit_description").val(description);
+
+      // Show the edit modal
+      $('#edit').modal('show');
+      });
       $(function () {
          $("#example1").DataTable();
       });

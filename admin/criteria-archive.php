@@ -18,6 +18,17 @@ if ($result = $con->query($query)) {
 }
 
 ?>
+<?php
+$query = "SELECT id, criteria_name FROM criteria_archive";
+$criteria_options = '';
+
+if ($result = $con->query($query)) {
+    while ($row = $result->fetch_assoc()) {
+        $criteria_options .= '<option value="' . $row['id'] . '">' . $row['criteria_name'] . '</option>';
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -279,7 +290,6 @@ if ($result = $con->query($query)) {
                      <a href="#" class="btn btn-danger" data-dismiss="modal">No</a>
                      <button type="submit" class="btn btn-success">Yes</button>
                   </form>
-                  
                </div>
             </div>
          </div>
@@ -298,10 +308,13 @@ if ($result = $con->query($query)) {
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label class="float-left">Criteria Name</label>
-                                            <input type="text" class="form-control" id="edit_criteria_name" name="criteria_name" placeholder="Criteria Name">
-                                        </div>
+                                       <div class="form-group">
+                                          <label class="float-left">Criteria Name</label>
+                                          <select class="form-control" name="criteria_name" id="criteria_name">
+                                             <option value="" disabled selected>Select Criteria</option>
+                                                <?php echo $criteria_options; ?>
+                                          </select>
+                                       </div>
                                     </div>
                                     <div class="col-md-12">
                                         <div class="form-group">
@@ -335,12 +348,15 @@ if ($result = $con->query($query)) {
                            <div class="card-header">
                               <h5><img src="../asset/img/criteria.png" width="40"> Criteria Information</h5>
                            </div>
-                           <div class="row">
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Criteria Name</label>
-                                    <input type="text" name="criteria_name" class="form-control" placeholder="Criteria Name">
-                                 </div>
+                              <div class="row">
+                                 <div class="col-md-12">
+                                    <div class="form-group">
+                                       <label class="float-left">Criteria Name</label>
+                                       <select class="form-control" name="criteria_name" id="criteria_name">
+                                          <option value="" disabled selected>Select Criteria</option>
+                                             <?php echo $criteria_options; ?>
+                                       </select>
+                                    </div>
                               </div>
                               <div class="col-md-12">
                                  <div class="form-group">
@@ -383,7 +399,6 @@ if ($result = $con->query($query)) {
         var description = $(this).closest("tr").find("td:eq(1)").text();
 
         $("#edit_criteria_id").val(criteriaID);
-        $("#edit_criteria_name").val(criteriaName);
         $("#edit_description").val(description);
         $('#edit').modal('show');
     });

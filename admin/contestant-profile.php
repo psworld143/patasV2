@@ -239,31 +239,32 @@ if ($result = $con->query($query)) {
                         </thead>
                         <tbody>
                         <?php
-                              $query = "SELECT * FROM contestants LEFT JOIN courses ON contestants.course = courses.id";
-                              if($result = $con->query($query)){
-                                 while($row = $result->fetch_assoc()){
-                                    echo '
-                                    <tr>
-                                       <td><img src="../images/'.$row['image'].'" style="width: 20px; height: 20px; radius: 50px; ">  '.$row['firstname'].' '.$row['middlename'].' ' .$row['lastname'].'</td>
-                                       <td>'.$row['contestant_no'].'</td>
-                                       <td>'.$row['age'].'</td>
-                                       <td>'.$row['gender'].'</td>
-                                       <td>'.$row['course_name'].'</td>
-                                       <td>'.$row['personal_background'].'</td>
-                                       <td class="text-center">
-                                          <a class="btn btn-sm btn-success" href="#" data-toggle="modal" data-target="#edit"><i
-                                             class="fa fa-user-edit"></i> update</a>
-                                          <a class="btn btn-sm btn-danger" href="#" data-toggle="modal" data-target="#delete"><i
-                                             class="fa fa-trash-alt"></i> delete</a>
-                                       </td>
-                                    </tr>
-
-                                    ';
-                                 }
+                           $query = "SELECT contestants.id as contestant_id, contestants.image, contestants.firstname, contestants.middlename, contestants.lastname, contestants.contestant_no, contestants.age, contestants.gender, courses.course_name, contestants.personal_background 
+                                    FROM contestants 
+                                    LEFT JOIN courses ON contestants.course = courses.id";
+                           if($result = $con->query($query)){
+                              while($row = $result->fetch_assoc()){
+                                 echo '
+                                 <tr>
+                                    <td><img src="../images/'.$row['image'].'" style="width: 20px; height: 20px; border-radius: 50%;"> '.$row['firstname'].' '.$row['middlename'].' ' .$row['lastname'].'</td>
+                                    <td>'.$row['contestant_no'].'</td>
+                                    <td>'.$row['age'].'</td>
+                                    <td>'.$row['gender'].'</td>
+                                    <td>'.$row['course_name'].'</td>
+                                    <td>'.$row['personal_background'].'</td>
+                                    <td class="text-center">
+                                       <a class="btn btn-sm btn-success open-EditDialog" href="#" data-id="'.$row['contestant_id'].'" data-toggle="modal" data-target="#edit">
+                                          <i class="fa fa-edit"></i>update
+                                       </a>
+                                       <a class="btn btn-sm btn-danger open-DeleteDialog" href="#" data-id="'.$row['contestant_id'].'" data-toggle="modal" data-target="#delete">
+                                          <i class="fa fa-trash-alt"></i>delete
+                                       </a>
+                                    </td>
+                                 </tr>
+                                 ';
                               }
-                        ?>
-                           
-                           
+                           }
+                           ?>
                         </tbody>
                      </table>
                   </div>
@@ -279,8 +280,13 @@ if ($result = $con->query($query)) {
                <img src="../asset/img/sent.png" alt="" width="50" height="46">
                <h3>Are you sure want to delete this Contestant?</h3>
                <div class="m-t-20">
-                  <a href="#" class="btn btn-danger" data-dismiss="modal">No</a>
-                  <button type="submit" class="btn btn-success">Yes</button>
+                  <form action="backend/delete_contestant_profile.php" method="POST">
+                     <div class="modal-body">
+                        <input type="hidden" name="contestant_profileID" id="contestant_profileID">
+                     </div>
+                     <a href="#" class="btn btn-danger" data-dismiss="modal">No</a>
+                     <button type="submit" class="btn btn-success">Yes</button>
+                  </form>
                </div>
             </div>
          </div>
@@ -290,7 +296,7 @@ if ($result = $con->query($query)) {
       <div class="modal-dialog modal-dialog-centered modal-lg">
          <div class="modal-content">
             <div class="modal-body text-center">
-               <form>
+               <form action="" method="POST">
                   <div class="card-body">
                      <div class="row">
                         <div class="col-md-12">
@@ -300,31 +306,31 @@ if ($result = $con->query($query)) {
                            <div class="row">
                               <div class="col-md-4">
                                  <div class="form-group">
-                                    <label class="float-left">Firts Name</label>
-                                    <input type="text" class="form-control" placeholder="Firts Name">
+                                    <label class="float-left">First Name</label>
+                                    <input type="text" id="edit_contestant_profile_name" name="contestant_profile_name" class="form-control" placeholder="Firts Name">
                                  </div>
                               </div>
                               <div class="col-md-4">
                                  <div class="form-group">
                                     <label class="float-left">Middle Name</label>
-                                    <input type="text" class="form-control" placeholder="Middle Name">
+                                    <input type="text" id="edit_contestant_profile_middlename" name="contestant_profile_middlename" class="form-control" placeholder="Middle Name">
                                  </div>
                               </div>
                               <div class="col-md-4">
                                  <div class="form-group">
                                     <label class="float-left">Last Name</label>
-                                    <input type="text" class="form-control" placeholder="Last Name">
+                                    <input type="text" id="edit_contestant_profile_lastname" name="contestant_profile_lastname" class="form-control" placeholder="Last Name">
                                  </div>
                               </div>
                               <div class="col-md-4">
                                  <div class="form-group">
                                     <label class="float-left">Age</label>
-                                    <input type="number" class="form-control" placeholder="Age">
+                                    <input type="number" id="edit_contestant_profile_age" name="contestant_profile_age" class="form-control" placeholder="Age">
                                  </div>
                               </div><div class="col-md-4">
                                  <div class="form-group">
                                  <label class="float-left">Gender</label>
-                                 <select class="form-control">
+                                 <select class="form-control" id="edit_contestant_profile_gender" name="contestant_profile_gender">
                                     <option>Male</option>
                                     <option>Female</option>
                                  </select>
@@ -332,7 +338,7 @@ if ($result = $con->query($query)) {
                               </div><div class="col-md-4">
                                  <div class="form-group">
                                  <label class="float-left">Divisions</label>
-                                 <select class="form-control">
+                                 <select class="form-control"  id="edit_contestant_profile_divisions" name="contestant_profile_divisions">
                                     <option>Divisions 1</option>
                                     <option>Divisions 2</option>
                                     <option>Divisions 3</option>
@@ -342,14 +348,14 @@ if ($result = $con->query($query)) {
                               <div class="col-md-12">
                                  <div class="form-group">
                                     <label class="float-left">Personal Background</label>
-                                    <textarea class="form-control" placeholder="Personal Background"></textarea>
+                                    <textarea class="form-control" id="edit_contestant_profile_background" name="contestant_profile_background" placeholder="Personal Background"></textarea>
                                  </div>
                               </div>
+                              <input type="hidden" id="edit_contestant_profile_id" name="contestant_profile_id">
                            </div>
                         </div>
                      </div>
                   </div>
-                  <!-- /.card-body -->
                   <div class="card-footer">
                      <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
                      <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -466,6 +472,17 @@ if ($result = $con->query($query)) {
    <script src="../asset/tables/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
    <script src="../asset/tables/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
    <script>
+      $(document).on("click", ".open-DeleteDialog", function () {
+         var contestant_profileID = $(this).data('id');
+         $("#contestant_profileID").val(contestant_profileID);
+         $('#delete').modal('show');
+      });
+      $(document).on("click", ".btn-success", function () {
+        var contestant_profile_id = $(this).data('id');
+
+        $("#edit_contestant_profile_id").val(contestant_profile_id);
+        $('#edit').modal('show');
+    });
       $(function () {
          $("#example1").DataTable();
       });

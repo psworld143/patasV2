@@ -236,29 +236,33 @@ if ($result = $con->query($query)) {
                            </tr>
                         </thead>
                         <tbody>
-                           
-                           <?php
-                              $query = "SELECT * FROM event_contestant LEFT JOIN contestants ON contestants.id = event_contestant.contestant_id LEFT JOIN event_category ON event_category.id = event_contestant.event_id";
-                              if($result = $con->query($query)){
-                                 while($row = $result->fetch_assoc()){
-                                     echo '
-                                     <tr>
-                                     <td>'.$row['category_name'].'</td>
-                                     <td>'.$row['firstname'].' '.$row['middlename'].' '.$row['lastname'].'</td>
-                                     <td><span class="badge bg-success">ready</span></td>
-                                     <td class="text-center">
-                                        <a class="btn btn-sm btn-success" href="#" data-toggle="modal" data-target="#edit"><i
-                                              class="fa fa-user-edit"></i> update</a>
-                                        <a class="btn btn-sm btn-danger" href="#" data-toggle="modal" data-target="#delete"><i
-                                              class="fa fa-trash-alt"></i> delete</a>
-                                     </td>
-                                     </tr>
-                                     ';
-                                 }
-                              }     
+                        <?php
+                           $query = "SELECT contestants.id as contestant_id, contestants.image, contestants.firstname, contestants.middlename, contestants.lastname, contestants.contestant_no, contestants.age, contestants.gender, courses.course_name, contestants.personal_background 
+                                    FROM contestants 
+                                    LEFT JOIN courses ON contestants.course = courses.id";
+                           if ($result = $con->query($query)) {
+                              while ($row = $result->fetch_assoc()) {
+                                 echo '
+                                 <tr>
+                                       <td><img src="../images/' . $row['image'] . '" style="width: 20px; height: 20px; border-radius: 50%;"> ' . $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'] . '</td>
+                                       <td>' . $row['contestant_no'] . '</td>
+                                       <td>' . $row['age'] . '</td>
+                                       <td>' . $row['gender'] . '</td>
+                                       <td>' . $row['course_name'] . '</td>
+                                       <td>' . $row['personal_background'] . '</td>
+                                       <td class="text-center">
+                                          <a class="btn btn-sm btn-success open-EditDialog" href="#" data-id="' . $row['contestant_id'] . '" data-toggle="modal" data-target="#edit">
+                                             <i class="fa fa-edit"></i> Update
+                                          </a>
+                                          <a class="btn btn-sm btn-danger open-DeleteDialog" href="#" data-id="' . $row['contestant_id'] . '" data-toggle="modal" data-target="#delete">
+                                             <i class="fa fa-trash-alt"></i> Delete
+                                          </a>
+                                       </td>
+                                 </tr>
+                                 ';
+                              }
+                           }
                            ?>
-                              
-                           
                         </tbody>
                      </table>
                   </div>
@@ -274,8 +278,13 @@ if ($result = $con->query($query)) {
                <img src="../asset/img/sent.png" alt="" width="50" height="46">
                <h3>Are you sure want to delete this Divisions?</h3>
                <div class="m-t-20">
-                  <a href="#" class="btn btn-danger" data-dismiss="modal">No</a>
-                  <button type="submit" class="btn btn-success">Yes</button>
+               <form action="" method="POST">
+                     <div class="modal-body">
+                        <input type="text" name="contestant_eventID" id="contestant_eventID">
+                     </div>
+                     <a href="#" class="btn btn-danger" data-dismiss="modal">No</a>
+                     <button type="submit" class="btn btn-success">Yes</button>
+                  </form>
                </div>
             </div>
          </div>
@@ -406,6 +415,11 @@ if ($result = $con->query($query)) {
    <script src="../asset/tables/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
    <script src="../asset/tables/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
    <script>
+      $(document).on("click", ".btn-danger", function () {
+      var contestant_eventID = $(this).data('id');
+      $("#contestant_eventID").val(contestant_eventID);
+      $('#delete').modal('show');
+      });
       $(function () {
          $("#example1").DataTable();
       });
