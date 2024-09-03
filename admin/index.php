@@ -226,7 +226,7 @@ if ($result = $con->query($query)) {
                <div class="col-12 col-sm-8 col-md-8 offset-sm-2 offset-md-2 offset-lg-2">
                   <div class="info-box">
                      <video width="100%" height="100%" controls autoplay muted>
-                        <source src="../videos/teaser.mp4" type="video/mp4">
+                        <source src="../images/aaabackground.mp4" type="video/mp4">
                      </video>
                   </div>
                </div>
