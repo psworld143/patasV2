@@ -118,141 +118,132 @@ if ($result = $con->query($query)) {
          </div>
       </aside>
       <div class="content-wrapper">
-         <div class="content-header">
-            <div class="container-fluid">
-               <div class="row mb-2">
-                  <div class="col-sm-6">
-                     <h1 class="m-0"><img src="../asset/img/score.png" width="40"> Score Sheets</h1>
-                  </div>
-                  <div class="col-sm-6">
-                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Score Sheets</li>
-                     </ol>
+      <div class="content-header">
+         <div class="container-fluid">
+            <div class="row mb-2">
+               <div class="col-sm-6">
+                  <h1 class="m-0"><img src="../asset/img/score.png" width="40"> Score Sheets</h1>
+               </div>
+               <div class="col-sm-6">
+                  <ol class="breadcrumb float-sm-right">
+                     <li class="breadcrumb-item"><a href="#">Home</a></li>
+                     <li class="breadcrumb-item active">Score Sheets</li>
+                  </ol>
+               </div>
+            </div>
+         </div>
+      </div>
+      <section class="content">
+         <div class="container-fluid">
+            <div class="card card-info elevation-2">
+               <br>
+               <div class="col-md-12">
+                  <div class="row">
+                     <?php
+                     $query = "SELECT * FROM `event_category` WHERE isTabulated ='Ready' ORDER BY order_number ASC LIMIT 1";
+                     if ($result = $con->query($query)) {
+                        if ($row = $result->fetch_assoc()) {
+                           $category_id = $row['id'];
+                           echo '
+                           <div class="col-lg-12">
+                              <div class="info-box">
+                                 <div class="info-box-content">
+                                    <span class="info-box-text">
+                                       <h5>Category: <span  style="color: red; font-size: 24px;">' . $row['category_name'] . '</span></h5>
+                                       <h6 style="animation: right_to_left 3s ease; text-align: left; width: 100%;"><span style="color: red; font-size: 20px;">Note: </span> Hi Judge '.$firstname.'! , Please input final scores before clicking the <span class="badge bg-info" style="font-size: 18px;">Record Score</span> Button. You can only record a score once.</h6>
+                                       <p style="animation: right_to_left 3s ease; text-align: left; width: 100%;"><span style="color: red; font-size: 12px;"> Please Do not forget to click ENTER or <span class="badge bg-info" style="font-size: 12px;">Record Score</span> Button after inputting score to avoid inconvenience. Thank you. </p>
+                                    </span>
+                                 </div>
+                              </div>
+                           </div>';
+
+                           $query2 = "SELECT * FROM contestants ORDER BY contestant_no ASC";
+                           if ($result2 = $con->query($query2)) {
+                              while ($row2 = $result2->fetch_assoc()) {
+                                 echo '
+                                 <div class="col-lg-6">
+                                    <form onSubmit="return confirm(\'Do you want to submit?\')" action="backend/add_score.php" method="POST">
+                                       <div class="info-box bg-warning content-header">
+                                          <div style="float: right;">
+                                             <a href="../images/' . $row2['image'] . '" target="_blank"><img src="../images/' . $row2['image'] . '" style="height: 100px; width: 80px;border-radius: 50%;  border: 2px solid #555;"></a>
+                                          </div>
+                                          <div style="float: left">
+                                             <p style="font-size: 22px;">' . $row2['firstname'] . ' ' . $row2['middlename'] . ' ' . $row2['lastname'] . '</p>
+                                             <p style="font-size: 18px;" class="badge bg-white" style="padding: 8px; margin-left: 10%; color: white;"> ' . $row2['gender'] . ' Candidate # ' . $row2['contestant_no'] . '</p>
+                                          </div>
+                                       </div>
+                                       <div class="info-box">
+                                          <div class="content-header bg-warning">
+                                          </div>
+                                          <table class="table">
+                                             <thead class="btn-cancel">
+                                                <tr>
+                                                   <th>Criteria</th>
+                                                   <th><center>Score</center></th>
+                                                </tr>
+                                             </thead>';
+
+                                 $query1 = "SELECT criteria_archive.id AS criteria_id, criteria_archive.criteria_name AS criteria_name, criteria_informations.percentage AS percentage 
+                                 FROM criteria_informations 
+                                 LEFT JOIN criteria_archive ON criteria_informations.criteria_id = criteria_archive.id 
+                                 LEFT JOIN scores ON scores.criteria_id = criteria_archive.id 
+                                 WHERE criteria_informations.event_id = '".$category_id."' 
+                                 AND criteria_informations.criteria_id 
+                                 NOT IN(SELECT scores.criteria_id FROM scores WHERE scores.judge = '".$_SESSION['username']."' 
+                                 AND scores.contestant = '".$row2['id']."' 
+                                 AND scores.category = '".$category_id."') 
+                                 GROUP BY criteria_informations.criteria_id";
+
+                                 if ($result1 = $con->query($query1)) {
+                                    while ($row1 = $result1->fetch_assoc()) {
+                                       $max = $row1['percentage'];
+                                       echo '
+                                       <tr style="border-collapse: collapse;">
+                                          <td>
+                                             <p style="font-size: 22px;">'.$row1['criteria_name'].' <span class="badge bg-yellow">'.$row1['percentage'].'%</span></p>
+                                          </td>
+                                          <td>
+                                             <div class="col-md-12">
+                                                <div class="form-group">
+                                                   <input type="hidden" name="contestant_id" value="'.$row2['id'].'">
+                                                   <input type="hidden" name="event_id" value="'.$row['id'].'">
+                                                   <input type="number" min="1" max="'.$max.'" name="'.$row1['criteria_id'].'" class="form-control" style="margin-top: 8%;" placeholder="Score">
+                                                </div>
+                                             </div>
+                                          </td>
+                                       </tr>';
+                                    }
+                                 } else {
+                                    echo '<tr><td colspan="2">No criteria found</td></tr>';
+                                 }
+
+                                 echo '
+                                          </table>
+                                       </div>
+                                       <div class="form-group">
+                                          <center>
+                                             <button type="submit" class="btn btn-info">Record Score</button>
+                                          </center>
+                                       </div>
+                                    </form>
+                                 </div>';
+                              }
+                           } else {
+                              echo '<div class="col-md-12">No contestants found</div>';
+                           }
+                        } else {
+                           echo '<div class="col-md-12">No categories found</div>';
+                        }
+                     } else {
+                        echo '<div class="col-md-12">Error fetching category data</div>';
+                     }
+                     ?>
                   </div>
                </div>
             </div>
          </div>
-         <section class="content">
-            <div class="container-fluid">
-               <div class="card card-info elevation-2">
-                  <br>
-                  <div class="col-md-12">
-                    
-                     <div class="row">
-                        
-                        <?php
-                        $current_judge = $_SESSION['username'];
-                        $query = "SELECT * FROM `event_category` WHERE isTabulated ='Ready' ORDER BY order_number ASC LIMIT 1";
-                        if ($result = $con->query($query)) {
-                           $row = $result->fetch_assoc();
-                           $category_id = $row['id'];
-                           echo '
-                           <div class="col-lg-12">
-                           <div class="info-box">
-                              <div class="info-box-content">
-                                 <span class="info-box-text">
-                                    <h5>Category: <span  style="color: red; font-size: 24px;">' . $row['category_name'] . '</span></h5>
-                                    <h6 style="animation: right_to_left 3s ease; text-align: left; width: 100%;"><span style="color: red; font-size: 20px;">Note: </span> Hi Judge '.$firstname.'! , Please input final scores before clicking the <span class="badge bg-info" style="font-size: 18px;">Record Score</span> Button. You can only record a score once.</h6>
-                                    <p style="animation: right_to_left 3s ease; text-align: left; width: 100%;"><span style="color: red; font-size: 12px;"> Please Do not forget to click ENTER or <span class="badge bg-info" style="font-size: 12px;">Record Score</span> Button after inputting score to avoid inconvenience. Thank you. </p>
-                                    </span>
-                              </div>
-                           </div>
-                        </div>
-                              ';
-                              $query2 = "SELECT * FROM contestants ORDER BY contestant_no ASC";
-                        if ($result2 = $con->query($query2)) {
-                           while ($row2 = $result2->fetch_assoc()) {
-                              echo '
-                              
-                             <div class="col-lg-6">
-                             <form onSubmit="return confirm("Do you want to submit?") " action="backend/add_score.php" method="POST">
-                             <div class="info-box bg-warning content-header">
-                                 <div style="float: right;">
-                                    <a href="../images/' . $row2['image'] . '" target="_blank"><img src="../images/' . $row2['image'] . '" style="height: 100px; width: 80px;border-radius: 50%;  border: 2px solid #555;"></a>
-                                 </div>
-                                 <div style="float: left">
-                                    <p style="font-size: 22px;">' . $row2['firstname'] . ' ' . $row2['middlename'] . ' ' . $row2['lastname'] . '</p>
-                                    <p style="font-size: 18px;" class="badge bg-white" style="padding: 8px; margin-left: 10%; color: white;"> ' . $row2['gender'] . ' Candidate # ' . $row2['contestant_no'] . '</p>
-                                    
-                                 </div>
-                                 
-                             </div>
-                             
-                             <div class="info-box">
-                                <div class="content-header bg-warning">
-                                </div>
-                                <table class="table">
-                                   <thead class="btn-cancel">
-                                      <tr>
-                                         <th>Criteria</th>
-                                         <th><center>Score</center></th>
-                                      </tr>
-                                   </thead> ';
-
-                              $query1 = "SELECT criteria_archive.id AS criteria_id,  criteria_archive.criteria_name AS criteria_name, criteria_informations.percentage AS percentage 
-                              FROM criteria_informations LEFT JOIN criteria_archive ON criteria_informations.criteria_id = criteria_archive.id 
-                              LEFT JOIN scores ON scores.criteria_id = criteria_archive.id WHERE criteria_informations.event_id = '".$category_id."' AND criteria_informations.criteria_id 
-                              NOT IN(SELECT scores.criteria_id FROM scores WHERE scores.judge = '".$_SESSION['username']."' AND scores.contestant = '".$row2['id']."' AND scores.category = '".$category_id."') GROUP BY criteria_informations.criteria_id";
-                              if ($result1 = $con->query($query1)) {
-                                 while ($row1 = $result1->fetch_assoc()) {
-                                    $max = $row1['percentage'];
-                                    
-                                    echo '
-                                   <tr style="border-collapse: collapse;">
-                                      <td>
-                                         <p style="font-size: 22px; ">'.$row1['criteria_name'].' <span class="badge bg-yellow" >'.$row1['percentage'].'%</span></p>
-                                      </td>
-                                      <td>
-                                         <div class="col-md-12">
-                                            <div class="form-group">
-                                            <input type="hidden" name="contestant_id" value="'.$row2['id'].'">
-                                          <input type="hidden" name="event_id" value="'.$row['id'].'">
-                                           <input type="number" min="1" max="'.$max.'" name="'.$row1['criteria_id'].'" class="form-control" style="margin-top: 8%;" placeholder="Score">';
-                                            
-                                               
-                                    echo'
-                                            </div>
-                                         </div>
-                                      </td>
-                                   </tr>';
-                                 }
-                              }
-
-
-                              echo '
-                                   
-                                </table>
-                             </div>
-                             <div class="form-group">
-                                    <center>
-                                    
-                                   <button type="submit" class="btn btn-info">Record Score</button>
-                                    </center>
-                                </div>
-                             <div class="col-md-12">
-                               
-                             </div>
-                             </form>
-                          </div>
-                          
-                             ';
-                           }
-                        }
-                        }
-                        
-
-                        ?>
-                        
-
-
-                     </div>
-                     
-                  </div>
-               </div>
-            </div>
-         </section>
-      </div>
+      </section>
+   </div>
    </div>
    <script>
 
