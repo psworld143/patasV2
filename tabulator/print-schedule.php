@@ -49,7 +49,7 @@ while ($row = $result->fetch_assoc()) {
    </style>
 </head>
 
-< class="hold-transition sidebar-mini layout-fixed">
+
    <div class="wrapper">
       <nav class="main-header navbar navbar-expand navbar-light" style="background-color: rgb(240,158,65)">
          <!-- Left navbar links -->
