@@ -51,7 +51,7 @@ if ($result = $con->query($query)) {
                <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
             <li class="nav-item">
-               <p style="font-size: 24px; color: white;">Pageant Tabulation System - PaTaS</p>
+               <p style="font-size: 24px; color: white;">Pageant Tabulation System-PaTaS</p>
             </li>
          </ul>
          <ul class="navbar-nav ml-auto">
@@ -236,32 +236,35 @@ if ($result = $con->query($query)) {
                            </tr>
                         </thead>
                         <tbody>
-                        <?php
-                           $query = "SELECT contestants.id as contestant_id, contestants.image, contestants.firstname, contestants.middlename, contestants.lastname, contestants.contestant_no, contestants.age, contestants.gender, courses.course_name, contestants.personal_background 
-                                    FROM contestants 
-                                    LEFT JOIN courses ON contestants.course = courses.id";
-                           if ($result = $con->query($query)) {
-                              while ($row = $result->fetch_assoc()) {
-                                 echo '
-                                 <tr>
-                                       <td><img src="../images/' . $row['image'] . '" style="width: 20px; height: 20px; border-radius: 50%;"> ' . $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'] . '</td>
-                                       <td>' . $row['contestant_no'] . '</td>
-                                       <td>' . $row['age'] . '</td>
-                                       <td>' . $row['gender'] . '</td>
-                                       <td>' . $row['course_name'] . '</td>
-                                       <td>' . $row['personal_background'] . '</td>
-                                       <td class="text-center">
-                                          <a class="btn btn-sm btn-success open-EditDialog" href="#" data-id="' . $row['contestant_id'] . '" data-toggle="modal" data-target="#edit">
-                                             <i class="fa fa-edit"></i> Update
-                                          </a>
-                                          <a class="btn btn-sm btn-danger open-DeleteDialog" href="#" data-id="' . $row['contestant_id'] . '" data-toggle="modal" data-target="#delete">
-                                             <i class="fa fa-trash-alt"></i> Delete
-                                          </a>
-                                       </td>
-                                 </tr>
-                                 ';
+                           <?php
+                              $query = "SELECT event_contestant.id AS id, event_category.category_name, contestants.id AS contestant_id, contestants.firstname, contestants.middlename, contestants.lastname, contestants.image 
+                                       FROM event_contestant 
+                                       LEFT JOIN contestants ON contestants.id = event_contestant.contestant_id 
+                                       LEFT JOIN event_category ON event_category.id = event_contestant.event_id";
+
+                              if ($result = $con->query($query)) {
+                                 while ($row = $result->fetch_assoc()) {
+                                    echo '
+                                    <tr>
+                                          <td>'.$row['category_name'].'</td>
+                                          <td><img src="../images/' . $row['image'] . '" style="width: 20px; height: 20px; border-radius: 50%;"> ' . $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'] . '</td>
+                                          <td><span class="badge bg-success">ready</span></td>
+                                          <td class="text-center">
+                                             <a class="btn btn-sm btn-success open-EditDialog" href="#" 
+                                                data-id="'.$row['id'].'" 
+                                                data-category_name="'.$row['category_name'].'" 
+                                                data-contestant_name="'.$row['firstname'].' '.$row['middlename'].' '.$row['lastname'].'">
+                                                <i class="fa fa-edit"></i> Update
+                                             </a>
+                                             <a class="btn btn-sm btn-danger open-DeleteDialog" href="#" 
+                                                data-id="'.$row['id'].'">
+                                                <i class="fa fa-trash-alt"></i> Delete
+                                             </a>
+                                          </td>
+                                    </tr>
+                                    ';
+                                 }
                               }
-                           }
                            ?>
                         </tbody>
                      </table>
@@ -278,9 +281,9 @@ if ($result = $con->query($query)) {
                <img src="../asset/img/sent.png" alt="" width="50" height="46">
                <h3>Are you sure want to delete this Divisions?</h3>
                <div class="m-t-20">
-               <form action="" method="POST">
+                   <form action="backend/delete_contestant_event.php" method="POST">
                      <div class="modal-body">
-                        <input type="text" name="contestant_eventID" id="contestant_eventID">
+                        <input type="hidden" name="contestant_eventID" id="contestant_eventID">
                      </div>
                      <a href="#" class="btn btn-danger" data-dismiss="modal">No</a>
                      <button type="submit" class="btn btn-success">Yes</button>
@@ -294,7 +297,7 @@ if ($result = $con->query($query)) {
       <div class="modal-dialog modal-dialog-centered modal-md">
          <div class="modal-content">
             <div class="modal-body text-center">
-               <form>
+               <form action="backend/update_contestant-event.php" method="POST">
                   <div class="card-body">
                      <div class="row">
                         <div class="col-md-12">
@@ -305,23 +308,33 @@ if ($result = $con->query($query)) {
                               <div class="col-md-12">
                                  <div class="form-group">
                                     <label class="float-left">Event Name</label>
-                                    <input type="text" class="form-control" placeholder="Event Name">
+                                    <select class="form-control" id="edit_eventName" name="eventName">
+                                       <?php
+                                          $query = "SELECT id, category_name FROM event_category";
+                                           if ($result = $con->query($query)) {
+                                             while ($row = $result->fetch_assoc()) {
+                                                  echo '<option value="' . $row['id'] . '">' . $row['category_name'] . '</option>';
+                                                }
+                                            }
+                                       ?>
+                                    </select>
                                  </div>
                               </div>
                               <div class="col-md-12">
                                  <div class="form-group">
                                     <label class="float-left">Contestant Name</label>
-                                    <input type="text" class="form-control" placeholder="Contestant Name">
+                                    <input type="text" class="form-control" name="contestant_name" id="edit_contestant_name" placeholder="Contestant Name">
                                  </div>
                               </div>
                               <div class="col-md-12">
                                  <div class="form-group">
                                  <label class="float-left">Status</label>
-                                 <select class="form-control">
-                                    <option>Open</option>
-                                    <option>Close</option>
-                                 </select>
+                                    <select class="form-control">
+                                       <option>Open</option>
+                                       <option>Close</option>
+                                    </select>
                               </div>
+                              <input type="text" id="edit_contestant_eventID" name="contestant_eventID">
                               </div>
                            </div>
                         </div>
@@ -349,38 +362,36 @@ if ($result = $con->query($query)) {
                               <h5><img src="../asset/img/event.png" width="40"> Event Information</h5>
                            </div>
                            <div class="row">
-                           <div class="col-md-12">
+                              <div class="col-md-12">
                                  <div class="form-group">
-                                 <label class="float-left">Event Name</label>
-                                 <select class="form-control" name="event">
-                                    <?php
-                                    $query = "SELECT * FROM event_category";
-                                    if($result = $con->query($query)){
-                                       while($row = $result->fetch_assoc()){
-                                          echo '<option value="'.$row['id'].'">'.$row['category_name'].'</option>';
+                                    <label class="float-left">Event Name</label>
+                                    <select class="form-control" name="event">
+                                       <?php
+                                       $query = "SELECT * FROM event_category";
+                                       if($result = $con->query($query)){
+                                          while($row = $result->fetch_assoc()){
+                                             echo '<option value="'.$row['id'].'"> '.$row['category_name'].'</option>';
+                                          }
                                        }
-                                    }
-                                    ?>
-                                    
-                                 </select>
+                                       ?>
+                                    </select>
+                                 </div>
                               </div>
-                              </div>
-                              <div class="row">
-                           <div class="col-md-12">
+                           <div class="row">
+                              <div class="col-md-12">
                                  <div class="form-group">
-                                 <label class="float-left">Contestant Name</label>
-                                 <select class="form-control" name="contestant">
-                                    <?php
-                                    $query = "SELECT * FROM contestants";
-                                    if($result = $con->query($query)){
-                                       while($row = $result->fetch_assoc()){
-                                          echo '<option value="'.$row['id'].'">'.$row['firstname'].' '.$row['middlename'].' '.$row['lastname'].'</option>';
+                                    <label class="float-left">Contestant Name</label>
+                                    <select class="form-control" name="contestant">
+                                       <?php
+                                       $query = "SELECT * FROM contestants";
+                                       if($result = $con->query($query)){
+                                          while($row = $result->fetch_assoc()){
+                                             echo '<option value="'.$row['id'].'">'.$row['firstname'].' '.$row['middlename'].' '.$row['lastname'].'</option>';
+                                          }
                                        }
-                                    }
-                                    ?>
-                                    
-                                 </select>
-                              </div>
+                                       ?>
+                                    </select>
+                                 </div>
                               </div>
                               <div class="col-md-12">
                                  <div class="form-group">
@@ -397,8 +408,8 @@ if ($result = $con->query($query)) {
                   </div>
                   <!-- /.card-body -->
                   <div class="card-footer">
-                     <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
-                     <button type="submit" class="btn btn-primary">Save</button>
+                     <a href="#" class="btn btn-cancel" data-dismiss="modal">Cancel</a>
+                     <button type="submit" class="btn btn-save">Save</button>
                   </div>
                </form>
             </div>
@@ -415,14 +426,29 @@ if ($result = $con->query($query)) {
    <script src="../asset/tables/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
    <script src="../asset/tables/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
    <script>
-      $(document).on("click", ".btn-danger", function () {
-      var contestant_eventID = $(this).data('id');
-      $("#contestant_eventID").val(contestant_eventID);
-      $('#delete').modal('show');
-      });
       $(function () {
-         $("#example1").DataTable();
-      });
+    $(document).on("click", ".open-EditDialog", function() {
+        var eventName = $(this).data('category_name');
+        var contestantName = $(this).data('contestant_name');
+        var id = $(this).data('id');
+      
+        $("#edit_eventName").val(eventName);
+        $("#edit_contestant_name").val(contestantName);
+        $("#edit_contestant_eventID").val(id);
+
+        $('#edit').modal('show');
+    });
+
+    $(document).on("click", ".open-DeleteDialog", function () {
+        var contestant_eventID = $(this).data('id');
+        $("#contestant_eventID").val(contestant_eventID);
+        $('#delete').modal('show');
+    });
+
+    $("#example1").DataTable();
+});
+
+
    </script>
 </body>
 

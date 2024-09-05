@@ -382,12 +382,10 @@ if ($result = $con->query($query)) {
       var course_name = $(this).closest("tr").find("td:eq(0)").text();
       var description = $(this).closest("tr").find("td:eq(1)").text();
 
-      // Populate the modal fields with the data
       $("#edit_course_id").val(courseID);
       $("#edit_course_name").val(course_name);
       $("#edit_description").val(description);
-
-      // Show the edit modal
+      
       $('#edit').modal('show');
       });
       $(function () {
