@@ -238,29 +238,34 @@ if ($result = $con->query($query)) {
                         </thead>
                         <tbody>
                            <?php
-                           $query = "SELECT * FROM admin_users WHERE user_type='judge' ORDER BY first_name ASC";
-                           if($result = $con->query($query)){
-                              while($row = $result->fetch_assoc()){
-                                 echo'
-                                 <tr>
-                                 <td>'.$row['first_name'].' '.$row['middle_name'].' '.$row['last_name'].'</td>
-                                 <td>'.$row['username'].' </td>
-                                 <td>'.$row['password'].' </td>
-                                    <td class="text-center">
-                                       <a class="btn btn-sm btn-success" href="#" data-toggle="modal" data-target="#edit"><i
-                                       class="fa fa-user-edit"></i> update</a>
-                                       <a class="btn btn-sm btn-danger" href="#" data-toggle="modal" data-target="#delete"><i
-                                       class="fa fa-trash-alt"></i> delete</a>
-                                    </td>
-                                 </tr>
-                                 ';
+                              $query = "SELECT * FROM admin_users WHERE user_type='judge' ORDER BY first_name ASC";
+                              if($result = $con->query($query)){
+                                 while($row = $result->fetch_assoc()){
+                                    echo'
+                                    <tr>
+                                       <td>'.$row['first_name'].' '.$row['middle_name'].' '.$row['last_name'].'</td>
+                                       <td>'.$row['username'].'</td>
+                                       <td>'.$row['password'].'</td>
+                                       <td class="text-center">
+                                          <a class="btn btn-sm btn-success" href="#" 
+                                             data-id="'.$row['id'].'"
+                                             data-firstname="'.$row['first_name'].'" 
+                                             data-middlename="'.$row['middle_name'].'" 
+                                             data-lastname="'.$row['last_name'].'"
+                                             data-achievement="'.$row['achievement'].'"  
+                                             data-username="'.$row['username'].'" 
+                                             data-password="'.$row['password'].'" data-toggle="modal" data-target="#edit">
+                                                <i class="fa fa-edit"></i>update
+                                          </a>
+                                          <a class="btn btn-sm btn-danger open-DeleteDialog" href="#" data-id="'.$row['id'].'" data-toggle="modal" data-target="#delete">
+                                             <i class="fa fa-trash-alt"></i>delete
+                                          </a>
+                                       </td>
+                                    </tr>
+                                    ';
+                                 }
                               }
-                           }
-
                            ?>
-
-                           
-                          
                         </tbody>
                      </table>
                   </div>
@@ -276,8 +281,13 @@ if ($result = $con->query($query)) {
                <img src="../asset/img/sent.png" alt="" width="50" height="46">
                <h3>Are you sure want to delete this Judge?</h3>
                <div class="m-t-20">
-                  <a href="#" class="btn btn-danger" data-dismiss="modal">No</a>
-                  <button type="submit" class="btn btn-success">Yes</button>
+               <form action="backend/delete_judge_profile.php" method="POST">
+                     <div class="modal-body">
+                        <input type="hidden" name="judge_profileID" id="judge_profileID">
+                     </div>
+                     <a href="#" class="btn btn-danger" data-dismiss="modal">No</a>
+                     <button type="submit" class="btn btn-success">Yes</button>
+                  </form>
                </div>
             </div>
          </div>
@@ -287,7 +297,7 @@ if ($result = $con->query($query)) {
       <div class="modal-dialog modal-dialog-centered modal-lg">
          <div class="modal-content">
             <div class="modal-body text-center">
-                <form>
+                <form action="backend/update_judge_profile.php" method="POST">
                   <div class="card-body">
                      <div class="row">
                         <div class="col-md-12">
@@ -297,40 +307,41 @@ if ($result = $con->query($query)) {
                            <div class="row">
                               <div class="col-md-4">
                                  <div class="form-group">
-                                    <label class="float-left">Firts Name</label>
-                                    <input type="text" class="form-control" placeholder="Firts Name">
+                                    <label class="float-left">First Name</label>
+                                    <input type="text" name="judge_firstname" id="edit_judge_firstname" class="form-control" placeholder="First Name">
                                  </div>
                               </div>
                               <div class="col-md-4">
                                  <div class="form-group">
                                     <label class="float-left">Middle Name</label>
-                                    <input type="text" class="form-control" placeholder="Middle Name">
+                                    <input type="text" name="judge_middlename" id="edit_judge_middlename" class="form-control" placeholder="Middle Name">
                                  </div>
                               </div>
                               <div class="col-md-4">
                                  <div class="form-group">
                                     <label class="float-left">Last Name</label>
-                                    <input type="text" class="form-control" placeholder="Last Name">
+                                    <input type="text" name="judge_lastname" id="edit_judge_lastname" class="form-control" placeholder="Last Name">
                                  </div>
                               </div>
                               <div class="col-md-12">
                                  <div class="form-group">
                                     <label class="float-left">Achievement</label>
-                                    <textarea class="form-control" placeholder="Achievement"></textarea>
+                                    <textarea class="form-control" name="judge_achievement" id="edit_judge_achievement" placeholder="Achievement"></textarea>
                                  </div>
                               </div>
                               <div class="col-md-6">
                                  <div class="form-group">
                                     <label class="float-left">UserName</label>
-                                    <input type="text" class="form-control" placeholder="UserName">
+                                    <input type="text" name="judge_username" id="edit_judge_username" class="form-control" placeholder="UserName">
                                  </div>
                               </div>
                               <div class="col-md-6">
                                  <div class="form-group">
                                     <label class="float-left">Password</label>
-                                    <input type="text" class="form-control" placeholder="***************">
+                                    <input type="password" name="judge_password" id="edit_judge_password" class="form-control" placeholder="***************">
                                  </div>
                               </div>
+                              <input type="hidden" name="judge_profile_id" id="edit_judge_profile_id">
                            </div>
                         </div>
                      </div>
@@ -338,7 +349,7 @@ if ($result = $con->query($query)) {
                   <!-- /.card-body -->
                   <div class="card-footer">
                      <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
-                     <button type="submit" class="btn btn-primary">Save  Changes</button>
+                     <button type="submit" class="btn btn-primary">Save Changes</button>
                   </div>
                </form>
             </div>
@@ -349,7 +360,7 @@ if ($result = $con->query($query)) {
       <div class="modal-dialog modal-dialog-centered modal-lg">
          <div class="modal-content">
             <div class="modal-body text-center">
-               <form>
+               <form action="add_judge.php" method="POST"> <!-- Ensure this points to your add judge PHP script -->
                   <div class="card-body">
                      <div class="row">
                         <div class="col-md-12">
@@ -359,38 +370,38 @@ if ($result = $con->query($query)) {
                            <div class="row">
                               <div class="col-md-4">
                                  <div class="form-group">
-                                    <label class="float-left">Firts Name</label>
-                                    <input type="text" class="form-control" placeholder="Firts Name">
+                                    <label class="float-left">First Name</label>
+                                    <input type="text" class="form-control" name="first_name" placeholder="First Name" required>
                                  </div>
                               </div>
                               <div class="col-md-4">
                                  <div class="form-group">
                                     <label class="float-left">Middle Name</label>
-                                    <input type="text" class="form-control" placeholder="Middle Name">
+                                    <input type="text" class="form-control" name="middle_name" placeholder="Middle Name">
                                  </div>
                               </div>
                               <div class="col-md-4">
                                  <div class="form-group">
                                     <label class="float-left">Last Name</label>
-                                    <input type="text" class="form-control" placeholder="Last Name">
+                                    <input type="text" class="form-control" name="last_name" placeholder="Last Name" required>
                                  </div>
                               </div>
                               <div class="col-md-12">
                                  <div class="form-group">
                                     <label class="float-left">Achievement</label>
-                                    <textarea class="form-control" placeholder="Achievement"></textarea>
+                                    <textarea class="form-control" name="achievement" placeholder="Achievement" required></textarea>
                                  </div>
                               </div>
                               <div class="col-md-6">
                                  <div class="form-group">
-                                    <label class="float-left">UserName</label>
-                                    <input type="text" class="form-control" placeholder="UserName">
+                                    <label class="float-left">Username</label>
+                                    <input type="text" class="form-control" name="username" placeholder="Username" required>
                                  </div>
                               </div>
                               <div class="col-md-6">
                                  <div class="form-group">
                                     <label class="float-left">Password</label>
-                                    <input type="text" class="form-control" placeholder="***************">
+                                    <input type="password" class="form-control" name="password" placeholder="***************" required>
                                  </div>
                               </div>
                            </div>
@@ -417,10 +428,35 @@ if ($result = $con->query($query)) {
    <script src="../asset/tables/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
    <script src="../asset/tables/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
    <script>
-      $(function () {
-         $("#example1").DataTable();
-      });
-   </script>
+    $(document).on("click", ".open-DeleteDialog", function () {
+        var judge_profileID = $(this).data('id');
+        $("#judge_profileID").val(judge_profileID);
+        $('#delete').modal('show');
+    });
+    $(document).on("click", ".btn-success", function() {
+        var firstname = $(this).data('firstname');
+        var middlename = $(this).data('middlename');
+        var lastname = $(this).data('lastname');
+        var achievement = $(this).data('achievement');
+        var username = $(this).data('username');
+        var password = $(this).data('password');
+        var judge_profile_id = $(this).data('id');
+
+        $("#edit_judge_firstname").val(firstname);
+        $("#edit_judge_middlename").val(middlename);
+        $("#edit_judge_lastname").val(lastname);
+        $("#edit_judge_achievement").val(achievement);
+        $("#edit_judge_username").val(username);
+        $("#edit_judge_password").val(password);
+        $("#edit_judge_profile_id").val(judge_profile_id);
+
+        $('#edit').modal('show');
+    });
+    $(function () {
+        $("#example1").DataTable();
+    });
+</script>
+
 </body>
 
 </html>

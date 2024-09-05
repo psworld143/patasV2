@@ -3,14 +3,14 @@ session_start();
 require('../../includes/dbcon.php');
 
 if (isset($_POST['contestant_eventID'])) {
-    $ccontestant_event_id = $_POST['contestant_eventID'];
+    $id = $_POST['contestant_eventID'];
 
-    $query = "DELETE FROM criteria_informations WHERE id = '$contestant_event_id'";
+    $query = "DELETE FROM event_contestant WHERE id = '$id'";
     $result = mysqli_query($con, $query);
+
     if ($result) {
-
     }
-
 }
-header('location:../event-criteria.php');
+
+header('Location: ../contestant-event.php');
 ?>
