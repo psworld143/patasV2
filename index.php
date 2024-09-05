@@ -1,6 +1,8 @@
 <?php 
 include 'includes/dbcon.php';
 session_start();
+$admin_id = $retrieved_user_id;
+$_SESSION['id'] = $admin_id;
 ?>
 <!DOCTYPE html>
 

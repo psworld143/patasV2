@@ -1,7 +1,30 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+?>
+
+<?php
+include '../includes/dbcon.php';
+session_start();
+$admin_id = isset($_SESSION['id']) ? $_SESSION['id'] : '';
+?>
+
+<?php
 include '../includes/dbcon.php';
 
+$sql = "SELECT id, category_name FROM event_category ORDER BY order_number";
+$result = $con->query($sql);
+
+$categories = [];
+while ($row = $result->fetch_assoc()) {
+    $categories[] = $row;
+}
+
+
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -172,11 +195,12 @@ echo '
 
                      $query3 = "
                      SELECT ec.id AS category_id, ec.percentage, 
-                            COALESCE(fs.final_score, 0) AS final_score
+                            COALESCE(fs.final_score, fs.total_score) AS score
                      FROM event_category ec
                      LEFT JOIN final_score fs 
                      ON ec.id = fs.category_id AND fs.contestant_id = ?
                      ORDER BY ec.order_number ASC";
+                     
                      if ($stmt3 = $con->prepare($query3)) {
                         $stmt3->bind_param("i", $contestant_id);
                         $stmt3->execute();
@@ -188,7 +212,7 @@ echo '
                         while ($row3 = $result3->fetch_assoc()) {
                            $category = $row3['category_id'];
                            $percentage = $row3['percentage'];
-                           $points_gained = $row3['final_score'];
+                           $points_gained = $row3['score'];
                            $average_points = $totaljudge > 0 ? $points_gained / $totaljudge : $points_gained;
                            $total_points += $average_points;
                            $total_p = ($percentage / 100) * $average_points;
@@ -205,7 +229,7 @@ echo '
                      echo '
                      <td><center>
                         <a href="backend/addtopfive.php?id='.$contestant_id .'&&score='.number_format($total_points, 2).'" class="btn bg-green">Add to Top 5</a>
-                        <a href="#" class="btn bg-red" data-toggle="modal" data-target="#deductionsModal" data-id="'.$contestant_id.'" data-name="'.$row2['firstname'].' '.$row2['middlename'].' '.$row2['lastname'].'" data-total="'.number_format($total_points, 2).'">Deductions</a>
+                       <a href="#" class="btn bg-red" data-toggle="modal" data-target="#deductionsModal" data-id="'.$contestant_id.'" data-name="'.$row2['firstname'].' '.$row2['middlename'].' '.$row2['lastname'].'" data-total="'.number_format($total_points, 2).'" data-admin-id="'.$admin_id.'">Deductions</a>
                      </center></td>';
                      
                      $total_points = 0;
@@ -332,41 +356,30 @@ echo '
                 </button>
             </div>
             <div class="modal-body">
-                <form action="backend/deduct_points.php" method="POST">
+                <form action="deduct_points.php" method="POST">
                     <input type="hidden" name="contestant_id" id="contestant_id">
-                    <input type="hidden" name="current_total" id="current_total">
-                    
+                    <input type="hidden" name="admin_id" id="id"> 
+                                    
                     <div class="form-group">
                         <label for="contestant_name">Contestant Name</label>
                         <input type="text" class="form-control" id="contestant_name" name="contestant_name" readonly>
                     </div>
 
-                    <?php
-                    include '../includes/dbcon.php'; // Include your database connection file
-
-                    // Fetch categories from event_category
-                    $query = "SELECT id, category_name FROM event_category ORDER BY order_number ASC";
-                    $result = $con->query($query);
-
-                    if ($result->num_rows > 0) {
-                        echo '<div class="form-group">      
-                                <label for="category">Category</label>
-                                <select class="form-control" id="category" name="category" required>';
-                        while ($row = $result->fetch_assoc()) {
-                            echo '<option value="' . $row['id'] . '">' . $row['category_name'] . '</option>';
-                        }
-                        echo '</select>
-                            </div>';
-                    } else {
-                        echo '<p>No categories available</p>';
-                    }
-
-                    $con->close();
-                    ?>
+                    <div class="form-group">      
+                        <label for="category">Category</label>
+                        <select class="form-control" id="category" name="category" required>
+                            <option value="">Select a Category</option>
+                            <?php foreach ($categories as $category): ?>
+                                <option value="<?php echo $category['id']; ?>">
+                                    <?php echo htmlspecialchars($category['category_name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
                     <div class="form-group">      
-                        <label for="points_to_deduct">Points to Deduct</label>
-                        <input type="number" class="form-control" id="points_to_deduct" name="points_to_deduct" required>
+                        <label for="deduction_points">Points to Deduct</label>
+                        <input type="number" class="form-control" id="deduction_points" name="deduction_points" required>
                     </div>
                     
                     <div class="form-group">
@@ -383,6 +396,8 @@ echo '
 
 
 
+
+
    <!-- jQuery -->
    <script src="../asset/jquery/jquery.min.js"></script>
    <!-- Bootstrap 4 -->
@@ -390,18 +405,40 @@ echo '
    <!-- AdminLTE App -->
    <script src="../asset/js/adminlte.min.js"></script>
    <script>
-      $('#deductionsModal').on('show.bs.modal', function (event) {
-         var button = $(event.relatedTarget); // Button that triggered the modal
-         var contestantId = button.data('id'); // Extract info from data-* attributes
-         var contestantName = button.data('name');
-         var totalPoints = button.data('total');
-         
-         var modal = $(this);
-         modal.find('#contestant_id').val(contestantId);
-         modal.find('#contestant_name').val(contestantName);
-         modal.find('#current_total').val(totalPoints);
-      });
-   </script>
+    // When the modal is shown, populate it with the data
+    $('#deductionsModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var contestantId = button.data('id');
+        var contestantName = button.data('name');
+        var totalPoints = button.data('total');
+        var adminId = button.data('admin-id');
+
+        var modal = $(this);
+        modal.find('#contestant_id').val(contestantId);
+        modal.find('#contestant_name').val(contestantName);
+        modal.find('#current_total').val(totalPoints);
+        modal.find('#admin_id').val(adminId);
+    });
+
+    $(document).ready(function() {
+    $('#deductionsForm').submit(function(event) {
+        event.preventDefault(); // Prevent form from submitting the traditional way
+
+        // Gather form data
+        var formData = {
+            contestant_id: $('#contestant_id').val(),
+            category: $('#category').val(),
+            admin_id: $('#admin_id').val(),
+            points_to_deduct: $('#points_to_deduct').val(),
+            description: $('#description').val()
+        };
+
+
+    });
+});
+
+</script>
 </body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </html>
