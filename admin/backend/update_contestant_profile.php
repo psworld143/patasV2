@@ -19,9 +19,6 @@ if (isset($_POST['contestant_profile_id'])) {
 
     // Check if the update was successful
     if ($result) {
-        // Optionally, you can set a success message here
-    } else {
-        // Optionally, you can set an error message here
     }
 }
 
