@@ -154,7 +154,7 @@ $con->close();
                  
                   </div>
                   <div class="info-box">
-                     <h5>We're are glad that you will be a part of our celebration for SEAIT Intramurals 2022. Presenting to you the Search for Mr. and Ms. SEAIT 2022. </h5>
+                     <h5>We're are glad that you will be a part of our celebration for SEAIT Intramurals 2024. Presenting to you the Search for Mr. and Ms. SEAIT 2024. </h5>
                   </div>
                </div>
                <div class="col-12 col-sm-8 col-md-8 offset-sm-2 offset-md-2 offset-lg-2">

@@ -1,43 +1,9 @@
-<?php
-include 'includes/dbcon.php'; // Include database connection
-session_start(); // Start the session
-
-// Collect username and password from login form
-$username = $_POST['username'];
-$password = $_POST['password'];
-
-// Prepare the SQL query
-$query = "SELECT id FROM admin_users WHERE username = ? AND password = ?";
-
-// Initialize prepared statement
-$stmt = $mysqli->prepare($query);
-
-// Bind parameters (s = string, i = integer, etc.)
-$stmt->bind_param('ss', $username, $password);
-
-// Execute the query
-$stmt->execute();
-
-// Bind result variables
-$stmt->bind_result($user_id);
-
-// Fetch the result
-if ($stmt->fetch()) {
-    // Store user ID in session
-    $_SESSION['id'] = $user_id;
-
-    header('Location: dashboard.php');
-    exit();
-} else {
-    // Handle invalid credentials
-    echo "Invalid username or password.";
-}
-
-// Close statement and connection
-$stmt->close();
-$mysqli->close();
+<?php 
+include 'includes/dbcon.php';
+session_start();
+$admin_id = $admin_id['id']; 
+$_SESSION['id'] = $admin_id;
 ?>
-
 <!DOCTYPE html>
 
 

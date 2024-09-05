@@ -1,7 +1,5 @@
 <?php
 include '../includes/dbcon.php';
-
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,8 +39,7 @@ include '../includes/dbcon.php';
          <ul class="navbar-nav ml-auto">
             <li class="nav-item">
                <a class="nav-link" href="#" role="button">
-                  <img src="../asset/img/seait.png" class="img-circle" alt="User Image" width="40"
-                     style="margin-top: -8px;">
+                  <img src="../asset/img/seait.png" class="img-circle" alt="User Image" width="40" style="margin-top: -8px;">
                </a>
             </li>
             <li class="nav-item">
@@ -64,36 +61,25 @@ include '../includes/dbcon.php';
          </a>
          <div class="sidebar">
             <nav class="mt-2">
-               <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
-                  data-accordion="false">
+               <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                   <li class="nav-item">
                      <a href="index.php" class="nav-link">
                         <img src="../asset/img/dashboard.png" width="30">
-                        <p>
-                           Dashboard
-                        </p>
+                        <p>Dashboard</p>
                      </a>
-                  </li>
-
-
                   </li>
                   <li class="nav-item">
                      <a href="scores.php" class="nav-link">
                         <img src="../asset/img/score.png" width="30">
-                        <p>
-                           Scores
-                        </p>
+                        <p>Scores</p>
                      </a>
                   </li>
                   <li class="nav-item">
                      <a href="print-schedule.php" class="nav-link">
                         <img src="../asset/img/print.png" width="30">
-                        <p>
-                           Print Results
-                        </p>
+                        <p>Print Results</p>
                      </a>
                   </li>
-
                </ul>
             </nav>
          </div>
@@ -117,8 +103,7 @@ include '../includes/dbcon.php';
          <section class="content">
             <div class="container-fluid">
                <?php
-               $total_scores = 0;
-
+               // Fetch event categories
                $query = "SELECT * FROM event_category ORDER BY order_number ASC";
                if ($result = $con->query($query)) {
                   while ($row = $result->fetch_assoc()) {
@@ -136,6 +121,8 @@ include '../includes/dbcon.php';
                                     </div>
                                     <div class="col-md-12">
                                        <div class="row">';
+                     
+                     // Fetch contestants
                      $query1 = "SELECT * FROM contestants ORDER BY contestant_no ASC";
                      if ($result1 = $con->query($query1)) {
                         while ($row1 = $result1->fetch_assoc()) {
@@ -145,18 +132,15 @@ include '../includes/dbcon.php';
                                              <div class="info-box">
                                                 <img src=../images/' . $row1['image'] . ' width="50px" height="50px" style="border-radius: 50%;">
                                                 <h6>' . $row1['firstname'] . ' ' . $row1['middlename'] . ' ' . $row1['lastname'] . '</h6>
-                                                <h6>' . $row1['gender'] . ' Candidate # ' . $row1['contestant_no'] . '</h6>';
-
-                           echo '
-                                             </div>';
-
-                           echo '
+                                                <h6>' . $row1['gender'] . ' Candidate # ' . $row1['contestant_no'] . '</h6>
+                                             </div>
                                              <div class="col-md-12">
                                                 <div class="row">';
-                           $query3 = "SELECT *  FROM admin_users WHERE user_type = 'judge'";
+
+                           // Fetch judges
+                           $query3 = "SELECT * FROM admin_users WHERE user_type = 'judge'";
                            if ($result3 = $con->query($query3)) {
                               while ($row3 = $result3->fetch_assoc()) {
-
                                  $judge = $row3['username'];
                                  echo '
                                                             <div class="col-lg-6">
@@ -169,181 +153,87 @@ include '../includes/dbcon.php';
                                                                         <th>Criteria</th>
                                                                         <th>Score</th>
                                                                      </tr>';
+
+                                 // Query to get scores and deductions
+                                 $query4 = "
+                                    SELECT 
+                                        criteria_archive.criteria_name AS criteria_name, 
+                                        SUM(scores.score) AS total_score,
+                                        COALESCE(SUM(deduction.deduction_points), 0) AS total_deduction
+                                    FROM scores
+                                    LEFT JOIN criteria_archive ON criteria_archive.id = scores.criteria_id
+                                    LEFT JOIN deduction ON deduction.contestant_id = scores.contestant 
+                                        AND deduction.category_id = scores.category 
+                                        AND deduction.admin_id = scores.judge
+                                    WHERE scores.contestant = '$contestant' 
+                                        AND scores.category = '$event_id' 
+                                        AND scores.judge = '$judge'
+                                    GROUP BY criteria_archive.criteria_name
+                                 ";
+
                                  $total = 0;
-                                 $query4 = "SELECT  criteria_archive.criteria_name AS criteria_name, scores.score AS score FROM scores
-                                                                      LEFT JOIN criteria_archive ON criteria_archive.id = scores.criteria_id WHERE 
-                                                                      (scores.contestant = '" . $contestant . "' AND scores.category = '" . $event_id . "') AND scores.judge = '" . $judge . "'";
+                                 $total_deduction = 0;
+
                                  if ($result4 = $con->query($query4)) {
-
                                     while ($row4 = $result4->fetch_assoc()) {
-                                       $total = $total + $row4['score'];
-
+                                       $total += $row4['total_score'];
+                                       $total_deduction = $row4['total_deduction'];
                                        echo '
                                                                            <tr>
                                                                               <td>' . $row4['criteria_name'] . '</td>
-                                                                              <td><span class="badge bg-green">' . $row4['score'] . '</span></td>
+                                                                              <td><span class="badge bg-green">' . $row4['total_score'] . '</span></td>
                                                                            </tr>
-                                                                     
-                                                                           ';
+                                                                       ';
                                     }
+
+                                    // Calculate final score after deductions
+                                    $adjusted_score = $total - $total_deduction;
+
                                     echo '
-                                                                        
                                                                         <tr>
-                                                                           <td>Total</td>
-                                                                           <td><span class="badge bg-red">' . $total . '/100</span></td>
+                                                                           <td>Total (with deductions)</td>
+                                                                           <td><span class="badge bg-red">' . $adjusted_score . '/100</span></td>
                                                                      </tr>
-                                                                        ';
+                                                                     <tr>
+                                                                           <td>Total (without deductions)</td>
+                                                                           <td><span class="badge bg-blue">' . $total . '/100</span></td>
+                                                                     </tr>';
                                  }
+
                                  echo '
-                                                                  </table>
-                                                                  
-                                                               </div>
-                                                               
-                                                               
-                                                               
+                                                               </table>
                                                             </div>
-                                                            
-                                                
-                                                         ';
+                                                         </div>';
                               }
                            }
-
                            echo '
                                                 </div>
                                              </div>
-                                             
-                                             ';
-
-                           echo '
-                                          </div>
-                                          ';
+                                          </div>';
                         }
                      }
                      echo '
                                        </div>
-                                    </div>   
-                                    
+                                    </div>
                                  </div>
                               </div>
-                              ';
-
-                     echo '
-                           </div>
-                        </div>
-                           ';
+                           </div>';
                   }
                }
-
                ?>
-
             </div>
          </section>
       </div>
    </div>
-   <div id="delete" class="modal animated rubberBand delete-modal" role="dialog">
-      <div class="modal-dialog modal-dialog-centered">
-         <div class="modal-content">
-            <div class="modal-body text-center">
-               <img src="../asset/img/sent.png" alt="" width="50" height="46">
-               <h3>Are you sure want to delete this Divisions?</h3>
-               <div class="m-t-20">
-                  <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-                  <button type="submit" class="btn btn-danger">Delete</button>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-   <div id="edit" class="modal animated rubberBand delete-modal" role="dialog">
-      <div class="modal-dialog modal-dialog-centered modal-md">
-         <div class="modal-content">
-            <div class="modal-body text-center">
-               <form>
-                  <div class="card-body">
-                     <div class="row">
-                        <div class="col-md-12">
-                           <div class="card-header">
-                              <h5><img src="../asset/img/course.png" width="40"> Divisions Information</h5>
-                           </div>
-                           <div class="row">
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Divisions Name</label>
-                                    <input type="text" class="form-control" placeholder="Divisions Name">
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Description</label>
-                                    <textarea class="form-control" placeholder="Descriptions"></textarea>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-                  <!-- /.card-body -->
-                  <div class="card-footer">
-                     <a href="#" class="btn btn-cancel" data-dismiss="modal">Cancel</a>
-                     <button type="submit" class="btn btn-save">Save Changes</button>
-                  </div>
-               </form>
-            </div>
-         </div>
-      </div>
-   </div>
-   <div id="add" class="modal animated rubberBand delete-modal" role="dialog">
-      <div class="modal-dialog modal-dialog-centered modal-md">
-         <div class="modal-content">
-            <div class="modal-body text-center">
-               <form>
-                  <div class="card-body">
-                     <div class="row">
-                        <div class="col-md-12">
-                           <div class="card-header">
-                              <h5><img src="../asset/img/course.png" width="40"> Divisions Information</h5>
-                           </div>
-                           <div class="row">
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Divisions Name</label>
-                                    <input type="text" class="form-control" placeholder="Divisions Name">
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Description</label>
-                                    <textarea class="form-control" placeholder="Descriptions"></textarea>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-                  <!-- /.card-body -->
-                  <div class="card-footer">
-                     <a href="#" class="btn btn-cancel" data-dismiss="modal">Cancel</a>
-                     <button type="submit" class="btn btn-save">Save</button>
-                  </div>
-               </form>
-            </div>
-         </div>
-      </div>
-   </div>
-   <!-- jQuery -->
-   <script src="../asset/jquery/jquery.min.js"></script>
+   <!-- REQUIRED SCRIPTS -->
+   <script src="../asset/js/jquery.min.js"></script>
    <script src="../asset/js/bootstrap.bundle.min.js"></script>
-   <script src="../asset/js/adminlte.js"></script>
-   <!-- DataTables  & Plugins -->
+   <script src="../asset/js/adminlte.min.js"></script>
    <script src="../asset/tables/datatables/jquery.dataTables.min.js"></script>
    <script src="../asset/tables/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-   <script src="../asset/tables/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-   <script src="../asset/tables/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-   <script>
-      $(function () {
-         $("#example1").DataTable();
-      });
-   </script>
+   <script src="../asset/tables/datatables-buttons/js/dataTables.buttons.min.js"></script>
+   <script src="../asset/tables/datatables-buttons/js/buttons.html5.min.js"></script>
+   <script src="../asset/tables/datatables-buttons/js/buttons.print.min.js"></script>
 </body>
 
 </html>
