@@ -1,22 +1,52 @@
 <?php
 session_start();
- if(isset($_SESSION['username'])){
- }
- else{
-   header('location: ../index.php');
- }
-?>
-<?php
-include '../includes/dbcon.php';
-$current_judge = $_SESSION['username'];
-$query = "SELECT * FROM admin_users WHERE username = '$current_judge'";
-if ($result = $con->query($query)) {
-   $row = $result->fetch_assoc();
-   $firstname = $row['first_name'];
 
+// Check if the username is set in the session
+if (!isset($_SESSION['username'])) {
+    // Redirect to login page if not set
+    header('Location: ../index.php');
+    exit();
 }
 
+// Include database connection
+include '../includes/dbcon.php';
+
+$current_judge = $_SESSION['username'];
+$query = "SELECT * FROM admin_users WHERE username = ?";
+
+// Prepare the SQL statement
+$stmt = $con->prepare($query);
+
+// Bind parameters (s = string)
+$stmt->bind_param('s', $current_judge);
+
+// Execute the query
+$stmt->execute();
+
+// Get the result
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+
+// Check if the user was found
+if ($row) {
+    $firstname = $row['first_name'];
+    $user_id = $row['id']; // Capture user ID
+
+    // Optionally store user ID in session if needed
+    $_SESSION['user_id'] = $user_id;
+
+    // Output or use user data
+    //echo "Welcome, " . htmlspecialchars($firstname) . ". Your user ID is " . htmlspecialchars($user_id) . ".";
+} else {
+    // Handle the case where the user is not found
+    echo "User not found.";
+}
+
+// Close statement and connection
+$stmt->close();
+$con->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -120,7 +150,7 @@ if ($result = $con->query($query)) {
             <div class="container-fluid">
                <div class="col-12 col-sm-8 col-md-8 offset-sm-2 offset-md-2 offset-lg-2">
                   <div class="info-box">
-                     <h1>Welcome Tabulator <?php echo $firstname; ?>! </h1>
+                     <h1>Welcome <?php echo $firstname; ?>! </h1>
                  
                   </div>
                   <div class="info-box">

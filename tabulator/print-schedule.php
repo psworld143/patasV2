@@ -5,9 +5,10 @@ error_reporting(E_ALL);
 ?>
 
 <?php
-include '../includes/dbcon.php';
 session_start();
-$admin_id = isset($_SESSION['id']) ? $_SESSION['id'] : '';
+include '../includes/dbcon.php';
+// Fetch the user ID from the session
+$admin_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : '';
 ?>
 
 <?php
@@ -358,8 +359,8 @@ echo '
             <div class="modal-body">
                 <form action="deduct_points.php" method="POST">
                     <input type="hidden" name="contestant_id" id="contestant_id">
-                    <input type="hidden" name="admin_id" id="id"> 
-                                    
+                    <input type="hidden" name="admin_id" id="admin_id"> 
+
                     <div class="form-group">
                         <label for="contestant_name">Contestant Name</label>
                         <input type="text" class="form-control" id="contestant_name" name="contestant_name" readonly>
@@ -379,7 +380,7 @@ echo '
 
                     <div class="form-group">      
                         <label for="deduction_points">Points to Deduct</label>
-                        <input type="number" class="form-control" id="deduction_points" name="deduction_points" required>
+                        <input type="number" class="form-control"  name="deduction_points" required>
                     </div>
                     
                     <div class="form-group">
@@ -398,6 +399,7 @@ echo '
 
 
 
+
    <!-- jQuery -->
    <script src="../asset/jquery/jquery.min.js"></script>
    <!-- Bootstrap 4 -->
@@ -411,13 +413,13 @@ echo '
         var contestantId = button.data('id');
         var contestantName = button.data('name');
         var totalPoints = button.data('total');
-        var adminId = button.data('admin-id');
+        var adminId = button.data('admin-id'); // Admin ID from button data
 
         var modal = $(this);
         modal.find('#contestant_id').val(contestantId);
         modal.find('#contestant_name').val(contestantName);
-        modal.find('#current_total').val(totalPoints);
-        modal.find('#admin_id').val(adminId);
+        modal.find('#deduction_points').val(totalPoints);
+        modal.find('#admin_id').val(adminId); // Set the admin ID in the modal
     });
 
     $(document).ready(function() {
