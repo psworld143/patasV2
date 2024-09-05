@@ -294,62 +294,63 @@ if ($result = $con->query($query)) {
       </div>
    </div>
    <div id="edit" class="modal animated rubberBand delete-modal" role="dialog">
-      <div class="modal-dialog modal-dialog-centered modal-md">
-         <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
             <div class="modal-body text-center">
-               <form action="backend/update_contestant-event.php" method="POST">
-                  <div class="card-body">
-                     <div class="row">
-                        <div class="col-md-12">
-                           <div class="card-header">
-                              <h5><img src="../asset/img/event.png" width="40"> Event Information</h5>
-                           </div>
-                           <div class="row">
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Event Name</label>
-                                    <select class="form-control" id="edit_eventName" name="eventName">
-                                       <?php
-                                          $query = "SELECT id, category_name FROM event_category";
-                                           if ($result = $con->query($query)) {
-                                             while ($row = $result->fetch_assoc()) {
-                                                  echo '<option value="' . $row['id'] . '">' . $row['category_name'] . '</option>';
+                <form action="backend/update_contestant-event.php" method="POST">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card-header">
+                                    <h5><img src="../asset/img/event.png" width="40"> Event Information</h5>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="float-left">Event Name</label>
+                                            <select class="form-control" id="edit_eventName" name="eventName">
+                                                <?php
+                                                $query = "SELECT id, category_name FROM event_category";
+                                                if ($result = $con->query($query)) {
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        echo '<option value="' . $row['id'] . '">' . $row['category_name'] . '</option>';
+                                                    }
                                                 }
-                                            }
-                                       ?>
-                                    </select>
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Contestant Name</label>
-                                    <input type="text" class="form-control" name="contestant_name" id="edit_contestant_name" placeholder="Contestant Name">
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                 <label class="float-left">Status</label>
-                                    <select class="form-control">
-                                       <option>Open</option>
-                                       <option>Close</option>
-                                    </select>
-                              </div>
-                              <input type="text" id="edit_contestant_eventID" name="contestant_eventID">
-                              </div>
-                           </div>
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="float-left">Contestant Name</label>
+                                            <input type="text" class="form-control" name="contestant_name" id="edit_contestant_name" placeholder="Contestant Name">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="float-left">Status</label>
+                                            <select class="form-control" name="status">
+                                                <option value="Open">Open</option>
+                                                <option value="Close">Close</option>
+                                            </select>
+                                        </div>
+                                        <input type="hidden" id="edit_contestant_eventID" name="contestant_eventID">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                     </div>
-                  </div>
-                  <!-- /.card-body -->
-                  <div class="card-footer">
-                     <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
-                     <button type="submit" class="btn btn-primary">Save Changes</button>
-                  </div>
-               </form>
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer">
+                        <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
             </div>
-         </div>
-      </div>
-   </div>
+        </div>
+    </div>
+</div>
+
    <div id="add" class="modal animated rubberBand delete-modal" role="dialog">
       <div class="modal-dialog modal-dialog-centered modal-md">
          <div class="modal-content">

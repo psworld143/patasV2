@@ -238,7 +238,7 @@ if ($result = $con->query($query)) {
                         </thead>
                         <tbody>
                            <?php
-                              $query = "SELECT * FROM admin_users WHERE user_type='judge' ORDER BY first_name ASC";
+                              $query = "SELECT * FROM admin_users ORDER BY first_name ASC";
                               if($result = $con->query($query)){
                                  while($row = $result->fetch_assoc()){
                                     echo'
@@ -294,73 +294,78 @@ if ($result = $con->query($query)) {
       </div>
    </div>
    <div id="edit" class="modal animated rubberBand delete-modal" role="dialog">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-         <div class="modal-content">
-            <div class="modal-body text-center">
-                <form action="backend/update_judge_profile.php" method="POST">
-                  <div class="card-body">
-                     <div class="row">
-                        <div class="col-md-12">
-                           <div class="card-header">
-                              <h5><img src="../asset/img/judges.png" width="40"> Judges Information</h5>
+   <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+         <div class="modal-body text-center">
+            <form action="backend/update_judge_profile.php" method="POST">
+               <div class="card-body">
+                  <div class="row">
+                     <div class="col-md-12">
+                        <div class="card-header">
+                           <h5><img src="../asset/img/judges.png" width="40"> Judges Information</h5>
+                        </div>
+                        <div class="row">
+                           <div class="col-md-4">
+                              <div class="form-group">
+                                 <label class="float-left">First Name</label>
+                                 <input type="text" name="judge_firstname" id="edit_judge_firstname" class="form-control" placeholder="First Name">
+                              </div>
                            </div>
-                           <div class="row">
-                              <div class="col-md-4">
-                                 <div class="form-group">
-                                    <label class="float-left">First Name</label>
-                                    <input type="text" name="judge_firstname" id="edit_judge_firstname" class="form-control" placeholder="First Name">
-                                 </div>
+                           <div class="col-md-4">
+                              <div class="form-group">
+                                 <label class="float-left">Middle Name</label>
+                                 <input type="text" name="judge_middlename" id="edit_judge_middlename" class="form-control" placeholder="Middle Name">
                               </div>
-                              <div class="col-md-4">
-                                 <div class="form-group">
-                                    <label class="float-left">Middle Name</label>
-                                    <input type="text" name="judge_middlename" id="edit_judge_middlename" class="form-control" placeholder="Middle Name">
-                                 </div>
+                           </div>
+                           <div class="col-md-4">
+                              <div class="form-group">
+                                 <label class="float-left">Last Name</label>
+                                 <input type="text" name="judge_lastname" id="edit_judge_lastname" class="form-control" placeholder="Last Name">
                               </div>
-                              <div class="col-md-4">
-                                 <div class="form-group">
-                                    <label class="float-left">Last Name</label>
-                                    <input type="text" name="judge_lastname" id="edit_judge_lastname" class="form-control" placeholder="Last Name">
-                                 </div>
+                           </div>
+                           <div class="col-md-12">
+                              <div class="form-group">
+                                 <label class="float-left">Achievement</label>
+                                 <textarea class="form-control" name="judge_achievement" id="edit_judge_achievement" placeholder="Achievement"></textarea>
                               </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Achievement</label>
-                                    <textarea class="form-control" name="judge_achievement" id="edit_judge_achievement" placeholder="Achievement"></textarea>
-                                 </div>
+                           </div>
+                           <div class="col-md-6">
+                              <div class="form-group">
+                                 <label class="float-left">UserName</label>
+                                 <input type="text" name="judge_username" id="edit_judge_username" class="form-control" placeholder="UserName">
                               </div>
-                              <div class="col-md-6">
-                                 <div class="form-group">
-                                    <label class="float-left">UserName</label>
-                                    <input type="text" name="judge_username" id="edit_judge_username" class="form-control" placeholder="UserName">
-                                 </div>
-                              </div>
-                              <div class="col-md-6">
-                                 <div class="form-group">
-                                    <label class="float-left">Password</label>
+                           </div>
+                           <div class="col-md-6">
+                              <div class="form-group">
+                                 <label class="float-left">Password</label>
+                                 <div class="input-group">
                                     <input type="password" name="judge_password" id="edit_judge_password" class="form-control" placeholder="***************">
+                                    <div class="input-group-append">
+                                       <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">Show</button>
+                                    </div>
                                  </div>
                               </div>
-                              <input type="hidden" name="judge_profile_id" id="edit_judge_profile_id">
                            </div>
+                           <input type="hidden" name="judge_profile_id" id="edit_judge_profile_id">
                         </div>
                      </div>
                   </div>
-                  <!-- /.card-body -->
-                  <div class="card-footer">
-                     <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
-                     <button type="submit" class="btn btn-primary">Save Changes</button>
-                  </div>
-               </form>
-            </div>
+               </div>
+               <!-- /.card-body -->
+               <div class="card-footer">
+                  <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
+               </div>
+            </form>
          </div>
+      </div>
       </div>
    </div>
    <div id="add" class="modal animated rubberBand delete-modal" role="dialog">
       <div class="modal-dialog modal-dialog-centered modal-lg">
          <div class="modal-content">
             <div class="modal-body text-center">
-               <form action="add_judge.php" method="POST"> <!-- Ensure this points to your add judge PHP script -->
+               <form action="backend/add-judge.php" method="POST">
                   <div class="card-body">
                      <div class="row">
                         <div class="col-md-12">
@@ -392,16 +397,26 @@ if ($result = $con->query($query)) {
                                     <textarea class="form-control" name="achievement" placeholder="Achievement" required></textarea>
                                  </div>
                               </div>
-                              <div class="col-md-6">
+                              <div class="col-md-4">
                                  <div class="form-group">
                                     <label class="float-left">Username</label>
                                     <input type="text" class="form-control" name="username" placeholder="Username" required>
                                  </div>
                               </div>
-                              <div class="col-md-6">
+                              <div class="col-md-4">
                                  <div class="form-group">
                                     <label class="float-left">Password</label>
                                     <input type="password" class="form-control" name="password" placeholder="***************" required>
+                                 </div>
+                              </div>
+                              <div class="col-md-4">
+                                 <div class="form-group">
+                                    <label class="float-left">UserType</label>
+                                    <select class="form-control" name="usertype">
+                                    <option value="" disabled selected>Select User Type</option>
+                                    <option value="judge">judge</option>
+                                    <option value="tabulator">tabulator</option>
+                                 </select>
                                  </div>
                               </div>
                            </div>
@@ -411,7 +426,7 @@ if ($result = $con->query($query)) {
                   <!-- /.card-body -->
                   <div class="card-footer">
                      <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
-                     <button type="submit" class="btn btn-primary">Save</button>
+                     <button type="submit" name="submit" class="btn btn-primary">Save</button>
                   </div>
                </form>
             </div>
@@ -455,6 +470,17 @@ if ($result = $con->query($query)) {
     $(function () {
         $("#example1").DataTable();
     });
+    function togglePassword() {
+   var passwordField = document.getElementById("edit_judge_password");
+   var showHideButton = passwordField.nextElementSibling.children[0];
+   if (passwordField.type === "password") {
+      passwordField.type = "text";
+      showHideButton.textContent = "Hide";
+   } else {
+      passwordField.type = "password";
+      showHideButton.textContent = "Show";
+   }
+}
 </script>
 
 </body>
