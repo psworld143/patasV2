@@ -1,8 +1,3 @@
-<?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-?>
 
 <?php
 session_start();
@@ -231,6 +226,8 @@ echo '
                      <td><center>
                         <a href="backend/addtopfive.php?id='.$contestant_id .'&&score='.number_format($total_points, 2).'" class="btn bg-green">Add to Top 5</a>
                        <a href="#" class="btn bg-red" data-toggle="modal" data-target="#deductionsModal" data-id="'.$contestant_id.'" data-name="'.$row2['firstname'].' '.$row2['middlename'].' '.$row2['lastname'].'" data-total="'.number_format($total_points, 2).'" data-admin-id="'.$admin_id.'">Deductions</a>
+                        <a href="#" class="btn bg-blue" id="showDeductionsBtn" data-id="<?php echo $contestant_id; ?>">Show Deductions</a>
+
                      </center></td>';
                      
                      $total_points = 0;
@@ -408,6 +405,43 @@ echo '
     </div>
 </div>
 
+<!-- Show Deductions Modal -->
+<div class="modal fade" id="showDeductionModal" tabindex="-1" aria-labelledby="showDeductionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="showDeductionModalLabel">Deduction Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="deductionForm">
+          <div class="mb-3">
+            <label for="contestantId" class="form-label">Contestant ID</label>
+            <input type="text" class="form-control" id="contestantId" readonly>
+          </div>
+          <div class="mb-3">
+            <label for="deductionPoints" class="form-label">Deduction Points</label>
+            <input type="text" class="form-control" id="deductionPoints" readonly>
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" rows="3" readonly></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="transactionDate" class="form-label">Transaction Date</label>
+            <input type="text" class="form-control" id="transactionDate" readonly>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
 
 
@@ -420,39 +454,25 @@ echo '
    <!-- AdminLTE App -->
    <script src="../asset/js/adminlte.min.js"></script>
    <script>
-    // When the modal is shown, populate it with the data
-    $('#deductionsModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-        var contestantId = button.data('id');
-        var contestantName = button.data('name');
-        var totalPoints = button.data('total');
-        var adminId = button.data('admin-id'); // Admin ID from button data
+  // When the modal is shown, populate it with the data
+  $('#deductionsModal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget); // Button that triggered the modal
+      var contestantId = button.data('id');
+      var contestantName = button.data('name');
+      var totalPoints = button.data('total');
+      var adminId = button.data('admin-id'); // Admin ID from button data
 
-        var modal = $(this);
-        modal.find('#contestant_id').val(contestantId);
-        modal.find('#contestant_name').val(contestantName);
-        modal.find('#deduction_points').val(totalPoints);
-        modal.find('#admin_id').val(adminId); // Set the admin ID in the modal
-    });
+      var modal = $(this);
+      modal.find('#contestant_id').val(contestantId);
+      modal.find('#contestant_name').val(contestantName);
+      modal.find('#deduction_points').val(totalPoints);
+      modal.find('#admin_id').val(adminId); // Set the admin ID in the modal
+  });
 
-    $(document).ready(function() {
-    $('#deductionsForm').submit(function(event) {
-        event.preventDefault(); // Prevent form from submitting the traditional way
-
-        // Gather form data
-        var formData = {
-            contestant_id: $('#contestant_id').val(),
-            category: $('#category').val(),
-            admin_id: $('#admin_id').val(),
-            points_to_deduct: $('#points_to_deduct').val(),
-            description: $('#description').val()
-        };
-
-
-    });
-});
 
 </script>
+
+
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
