@@ -1,9 +1,12 @@
+<<<<<<< HEAD
+=======
 <?php 
 include 'includes/dbcon.php';
 session_start();
 $admin_id = $admin_id['id']; 
 $_SESSION['id'] = $admin_id;
 ?>
+>>>>>>> 90ec94ce00a1a40c1b176fe06ceb9f6fce2374e7
 <!DOCTYPE html>
 
 
