@@ -248,97 +248,110 @@ echo '
 
 
 
-                     <!-- Final Tally Results for Female Candidates -->
-                     <?php
-                        echo '
-                        <div class="card card-info elevation-0">
-                        <br>
-                        <div class="col-md-12">
-                           <div class="row">
-                              <div class="col-lg-12">
-                                 <div class="info-box bg-yellow">
-                                       <span class="info-box-text">
-                                          <h5><h3>Female Candidate Final Results</h3></span>      
-                                 </div>
-                              </div>
-                              <div class="col-lg-12">
-                                 <table id="example2" class="table">
-                                    <thead>
-                                       <tr>
-                                          <th>#</th>
-                                          <th>Candidate Name</th>';
-                                          $query1 = "SELECT * FROM event_category ORDER BY order_number ASC";
-                                          if ($result1 = $con->query($query1)) {
-                                             while ($row1 = $result1->fetch_assoc()) {
-                                                echo '<th><center>'.$row1['category_name'].'('.$row1['percentage'].'%)</center></th>';
-                                             }
-                                          }
-                                          echo '
-                                          <th><center>Total</center></th>
-                                          <th><center>Action</center></th>
-                                       </tr>
-                                    </thead>
-                                    <tbody>';
-                                    
-                                    $total_points = 0;
-                                    $total_percentage = 0;
-                                    $query2 = "SELECT * FROM contestants WHERE gender = 'Female'";
-                                    if ($result2 = $con->query($query2)) {
-                                       while ($row2 = $result2->fetch_assoc()) {
-                                          $contestant_id = $row2['id'];
-                                          echo '
-                                          <tr>
-                                             <td><span class="badge bg-green"># '.$row2['contestant_no'].'</span></td>
-                                             <td><i><img src="../images/'.$row2['image'].'" width="50px" height="50px" style="border-radius: 50%;"></i><b> '.$row2['firstname'].' '.$row2['middlename'].' '.$row2['lastname'].'</b></td>';
+<?php
+echo '
+<div class="card card-info elevation-0">
+<br>
+<div class="col-md-12">
+   <div class="row">
+      <div class="col-lg-12">
+         <div class="info-box bg-yellow">
+               <span class="info-box-text">
+                  <h5><h3>Female Candidate Final Results</h3></span>      
+         </div>
+      </div>
+      <div class="col-lg-12">
+         <table id="example2" class="table">
+            <thead>
+               <tr>
+                  <th>#</th>
+                  <th>Candidate Name</th>';
 
-                                             // Calculate the total points and percentages
-                                             $querycandid = "SELECT COUNT(*) AS total_judges FROM admin_users WHERE user_type = 'judge'";
-                                             if ($resultcandid = $con->query($querycandid)) {
-                                                $rowcandid = $resultcandid->fetch_assoc();
-                                                $totaljudge = $rowcandid['total_judges'];
-                                             }
+                  // Fetch event categories
+                  $query1 = "SELECT * FROM event_category ORDER BY order_number ASC";
+                  if ($result1 = $con->query($query1)) {
+                     while ($row1 = $result1->fetch_assoc()) {
+                        echo '<th><center>'.$row1['category_name'].'('.$row1['percentage'].'%)</center></th>';
+                     }
+                  }
 
-                                             $query3 = "SELECT * FROM event_category ORDER BY order_number ASC";
-                                             if ($result3 = $con->query($query3)) {
-                                                while ($row3 = $result3->fetch_assoc()) {
-                                                   $category = $row3['id'];
-                                                   $percentage = $row3['percentage'];
-                                                   $query4 = "SELECT SUM(score) AS total_points FROM scores WHERE category = '".$category."' AND contestant = '".$contestant_id."'";
-                                                   if ($result4 = $con->query($query4)) {
-                                                      $row4 = $result4->fetch_assoc();
-                                                      $total_points = $total_points + $row4['total_points'] / $totaljudge;
-                                                      $points_gained = $row4['total_points'];
-                                                      $total_p = ($percentage / 100) * $points_gained / $totaljudge;
-                                                      $total_percentage += $total_p;
+                  echo '
+                  <th><center>Total</center></th>
+                  <th><center>Action</center></th>
+               </tr>
+            </thead>
+            <tbody>';
 
-                                                      if ($row4['total_points'] == null) {
-                                                         echo '<td><center><span class="badge bg-red"> No Tabulated Score found!</span></center></td>';
-                                                      } else {
-                                                         echo '<td><center>Total of <b>'.($row4['total_points'] / $totaljudge).'</b> Points <span class="badge bg-green"> ('.$total_p.'%)</span></center></td>';
-                                                      }
-                                                   }
-                                                }
-                                             }
+            // Fetch female contestants
+            $query2 = "SELECT * FROM contestants WHERE gender = 'Female'";
+            if ($result2 = $con->query($query2)) {
+               while ($row2 = $result2->fetch_assoc()) {
+                  $contestant_id = $row2['id'];
+                  echo '
+                  <tr>
+                     <td><span class="badge bg-green"># '.$row2['contestant_no'].'</span></td>
+                     <td><i><img src="../images/'.$row2['image'].'" width="50px" height="50px" style="border-radius: 50%;"></i><b> '.$row2['firstname'].' '.$row2['middlename'].' '.$row2['lastname'].'</b></td>';
 
-                                             echo '
-                                             <td><b>'.$total_points.'</b> <span class="badge bg-green">('.$total_percentage.'%)</span></center></td>';
-                                             echo '
-                                             <td><center>
-                                                <a href="backend/addtopfive.php?id='.$contestant_id .'&&score='.$total_points.'" class="btn bg-green">Add to Top 5</a>
-                                                <a href="#" class="btn bg-red" data-toggle="modal" data-target="#deductionsModal" data-id="'.$contestant_id.'" data-name="'.$row2['firstname'].' '.$row2['middlename'].' '.$row2['lastname'].'" data-total="'.$total_points.'">Deductions</a>
-                                             </td>';
-                                             $total_points = 0;
-                                             $total_percentage = 0;
-                                          echo '</tr>';
-                                       }
-                                    }
-                                    echo '</tbody>
-                                 </table>
-                              </div>
-                           </div>
-                        </div>
-                        <br>';
-                     ?>
+                     // Retrieve the total number of judges
+                     $querycandid = "SELECT COUNT(*) AS total_judges FROM admin_users WHERE user_type = 'judge'";
+                     if ($resultcandid = $con->query($querycandid)) {
+                        $rowcandid = $resultcandid->fetch_assoc();
+                        $totaljudge = $rowcandid['total_judges'];
+                     }
+
+                     // Calculate total points and percentages
+                     $total_points = 0;
+                     $total_percentage = 0;
+
+                     $query3 = "
+                     SELECT ec.id AS category_id, ec.percentage, 
+                            COALESCE(fs.final_score, fs.total_score) AS score
+                     FROM event_category ec
+                     LEFT JOIN final_score fs 
+                     ON ec.id = fs.category_id AND fs.contestant_id = ?
+                     ORDER BY ec.order_number ASC";
+
+                     if ($stmt3 = $con->prepare($query3)) {
+                        $stmt3->bind_param("i", $contestant_id);
+                        $stmt3->execute();
+                        $result3 = $stmt3->get_result();
+                        
+                        while ($row3 = $result3->fetch_assoc()) {
+                           $category = $row3['category_id'];
+                           $percentage = $row3['percentage'];
+                           $points_gained = $row3['score'];
+                           $average_points = $totaljudge > 0 ? $points_gained / $totaljudge : $points_gained;
+                           $total_points += $average_points;
+                           $total_p = ($percentage / 100) * $average_points;
+                           $total_percentage += $total_p;
+
+                           echo '<td><center>Total of <b>'.number_format($average_points, 2).'</b> Points <span class="badge bg-green"> ('.number_format($total_p, 2).'%)</span></center></td>';
+                        }
+
+                        $stmt3->close();
+                     }
+
+                     echo '
+                     <td><center><b>'.number_format($total_points, 2).'</b> <span class="badge bg-green">('.number_format($total_percentage, 2).'%)</span></center></td>';
+                     echo '
+                     <td><center>
+                        <a href="backend/addtopfive.php?id='.$contestant_id .'&&score='.number_format($total_points, 2).'" class="btn bg-green">Add to Top 5</a>
+                         <a href="#" class="btn bg-red" data-toggle="modal" data-target="#deductionsModal" data-id="'.$contestant_id.'" data-name="'.$row2['firstname'].' '.$row2['middlename'].' '.$row2['lastname'].'" data-total="'.number_format($total_points, 2).'" data-admin-id="'.$admin_id.'">Deductions</a>
+                     </center></td>';
+                     
+                     $total_points = 0;
+                     $total_percentage = 0;
+                  echo '</tr>';
+               }
+            }
+            echo '</tbody>
+         </table>
+      </div>
+   </div>
+</div>
+<br>';
+?>
+
                   </div>
                </div>
             </div>
