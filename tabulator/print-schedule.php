@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 include '../includes/dbcon.php';
@@ -43,6 +42,7 @@ $stmt_deductions->close();
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
 
+
       <style type="text/css">
          table tr td {
             padding: 0.3rem !important;
@@ -51,20 +51,6 @@ $stmt_deductions->close();
          td a.btn {
             font-size: 0.7rem;
          }
-         .custom-button {
-    margin-top: 20px;
-    margin-left: 10px;
-    background-color: rgb(240,158,65);
-    width: 150px; /* Adjust width as needed */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.custom-button img {
-    margin-right: 8px; /* Space between image and text */
-}
-
       </style>
    </head>
 
@@ -248,13 +234,21 @@ $stmt_deductions->close();
                         echo '
                         <td><center><b>'.number_format($total_points, 2).'</b> <span class="badge bg-green">('.number_format($total_percentage, 2).'%)</span></center></td>';
                         echo '
-                        <td><center>
-                           <a href="backend/addtopfive.php?id='.$contestant_id .'&&score='.number_format($total_points, 2).'" class="btn bg-green">Add to Top 5</a>
-                           <a href="#" class="btn bg-red" data-toggle="modal" data-target="#deductionsModal" data-id="'.$contestant_id.'" data-name="'.$row2['firstname'].' '.$row2['middlename'].' '.$row2['lastname'].'" data-total="'.number_format($total_points, 2).'" data-admin-id="'.$admin_id.'"  title="Deduct points for this contestant"> <i class="fas fa-minus-circle"></i></a>
-                           <a href="#" class="btn btn-primary show-deductions-btn" data-contestant-id="<?php echo $contestant_id; ?>"title="Show Deductions for this contestant"><i class="fas fa-info-circle"></i></a>
+<td>
+    <center>
+        <a href="backend/addtopfive.php?id='.$contestant_id .'&&score='.number_format($total_points, 2).'" class="btn bg-green" data-bs-toggle="tooltip" data-bs-placement="top" title="Add to TOP 5">
+            <i class="fas fa-plus-circle fa-lg"></i>
+        </a>
+        <a href="#" class="btn bg-red" data-toggle="modal" data-target="#deductionsModal" data-id="'.$contestant_id.'" data-name="'.$row2['firstname'].' '.$row2['middlename'].' '.$row2['lastname'].'" data-total="'.number_format($total_points, 2).'" data-admin-id="'.$admin_id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="Deduct points for this contestant">
+            <i class="fas fa-minus-circle fa-lg"></i>
+        </a>
+        <a href="#" class="btn btn-primary show-deductions-btn" data-contestant-id="'.$contestant_id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Deductions for this contestant">
+            <i class="fas fa-info-circle fa-lg"></i>
+        </a>
+    </center>
+</td>
 
-                        </center></td>
-                        ';
+                     ';
                         
                         $total_points = 0;
                         $total_percentage = 0;
@@ -357,11 +351,21 @@ $stmt_deductions->close();
                         echo '
                         <td><center><b>'.number_format($total_points, 2).'</b> <span class="badge bg-green">('.number_format($total_percentage, 2).'%)</span></center></td>';
                         echo '
-                        <td><center>
-                        <a href="backend/addtopfive.php?id='.$contestant_id .'&&score='.number_format($total_points, 2).'" class="btn bg-green">Add to Top 5</a>
-                        <a href="#" class="btn bg-red" data-toggle="modal" data-target="#deductionsModal" data-id="'.$contestant_id.'" data-name="'.$row2['firstname'].' '.$row2['middlename'].' '.$row2['lastname'].'" data-total="'.number_format($total_points, 2).'" data-admin-id="'.$admin_id.'"  title="Deduct points for this contestant"> <i class="fas fa-minus-circle"></i></a>
-                        <a href="#" class="btn btn-primary show-deductions-btn" data-contestant-id="<?php echo $contestant_id; ?>"title="Show Deductions for this contestant"><i class="fas fa-info-circle"></i> </a>
-                        </center></td>';
+<td>
+    <center>
+        <a href="backend/addtopfive.php?id='.$contestant_id .'&&score='.number_format($total_points, 2).'" class="btn bg-green" data-bs-toggle="tooltip" data-bs-placement="top" title="Add to TOP 5">
+            <i class="fas fa-plus-circle fa-lg"></i>
+        </a>
+        <a href="#" class="btn bg-red" data-toggle="modal" data-target="#deductionsModal" data-id="'.$contestant_id.'" data-name="'.$row2['firstname'].' '.$row2['middlename'].' '.$row2['lastname'].'" data-total="'.number_format($total_points, 2).'" data-admin-id="'.$admin_id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="Deduct points for this contestant">
+            <i class="fas fa-minus-circle fa-lg"></i>
+        </a>
+        <a href="#" class="btn btn-primary show-deductions-btn" data-contestant-id="'.$contestant_id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Deductions for this contestant">
+            <i class="fas fa-info-circle fa-lg"></i>
+        </a>
+    </center>
+</td>
+
+                     ';
                         
                         $total_points = 0;
                         $total_percentage = 0;
@@ -384,7 +388,7 @@ $stmt_deductions->close();
       </div>
 
    <!-- Deductions Modal -->
-  <div id="deductionsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="deductionsModalLabel" aria-hidden="true">
+   <div id="deductionsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="deductionsModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
          <div class="modal-content">
                <div class="modal-header">
@@ -508,11 +512,11 @@ $(document).ready(function() {
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-    })
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
 </script>
 
 
