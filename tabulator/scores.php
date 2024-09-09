@@ -231,7 +231,7 @@ if ($result = $con->query($query)) {
                         // Display total and adjusted scores
                         echo '
                             <tr>
-                               <td><strong>Final Score (after deductions):</strong></td>
+                               <td><strong>Total Score:</strong></td>
                                <td><span class="badge bg-blue">' . $adjusted_score . '/' . $total_score . '</span></td>
                             </tr>
                         </table>
